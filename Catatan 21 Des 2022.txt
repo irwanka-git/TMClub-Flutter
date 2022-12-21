@@ -1,0 +1,19 @@
+
+1. otomatisasi H-n (bisa dikonfigurasi dari App) belum bayar, maka akan ada surat formal yg baku (surat disiapkan mas @Indra Bumi) dikirim via email dan aplikasi.  Tapi krn perlu vendor lgi yg by email ga usah (ini dikerjakan terakhir ya, suratnya belum siap)
+### Bakal ada notification untuk payment di menu notification ###
+
+2. group chat untuk masing2 event otomatis ada, dan peserta/pic/admin. Jika free = langsung masuk, jika berbayar = sudah bayar, baru boleh masuk
+
+
+3 Registrasi mengunakan email perusahaan <== ini dipending dulu aja, karena Toyota ga mau nambah biaya bulanan mereka
+4. No WA blm ke link, tdk bisa di klik.
+### Harusnya udah bisa  ###
+
+5. PIC bisa mendaftar untuk diri sendiri, baik event berbayar maupun gratis
+### ADD email in list peserta yang didaftarkan PIC ###
+6. Sertifikat baru bisa didonload stlh acara
+### Fitur Closing dan Cek Status Closing  ###
+
+8. Untuk web,aplikasi flutter yg sekarang di port ke web? Fitur yg ada hanya blog dan event view (jadi pendaftaran event dan lain2 ada di mobile).
+## perlu domain (sementara local aja)
+
