@@ -1,12 +1,12 @@
-#Tue Dec 20 22:18:55 ICT 2022
+#Wed Dec 21 19:50:48 ICT 2022
 path.3=classes4.dex
 path.2=classes3.dex
 path.1=classes2.dex
 path.0=classes.dex
-base.3=F\:\\Flutter Project\\tmc\\tmc-flutter\\tmcapp\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes4.dex
-base.2=F\:\\Flutter Project\\tmc\\tmc-flutter\\tmcapp\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes3.dex
-base.1=F\:\\Flutter Project\\tmc\\tmc-flutter\\tmcapp\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes2.dex
-base.0=F\:\\Flutter Project\\tmc\\tmc-flutter\\tmcapp\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+base.3=D\:\\Flutter Project\\TMClub-Flutter33\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes4.dex
+base.2=D\:\\Flutter Project\\TMClub-Flutter33\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes3.dex
+base.1=D\:\\Flutter Project\\TMClub-Flutter33\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes2.dex
+base.0=D\:\\Flutter Project\\TMClub-Flutter33\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
 renamed.3=classes4.dex
 renamed.2=classes3.dex
 renamed.1=classes2.dex

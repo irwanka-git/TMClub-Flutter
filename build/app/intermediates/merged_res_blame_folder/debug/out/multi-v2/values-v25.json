@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "F:\\Flutter Project\\tmc\\tmc-flutter\\tmcapp\\build\\app\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v25\\values-v25.xml",
+            "outputFile": "D:\\Flutter Project\\TMClub-Flutter33\\build\\app\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v25\\values-v25.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Diskominfo\\.gradle\\caches\\transforms-3\\8fef7b72dbe9af9c1e49518e208e3c7e\\transformed\\appcompat-1.4.1\\res\\values-v25\\values-v25.xml",
+                    "source": "C:\\Users\\irw#nk\\.gradle\\caches\\transforms-3\\8fef7b72dbe9af9c1e49518e208e3c7e\\transformed\\appcompat-1.4.1\\res\\values-v25\\values-v25.xml",
                     "from": {
                         "startLines": "2,3,4,6",
                         "startColumns": "4,4,4,4",
