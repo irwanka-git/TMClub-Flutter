@@ -1,0 +1,45 @@
+{
+    "logs": [
+        {
+            "outputFile": "D:\\Flutter Project\\tmc\\tmc-flutter\\tmcapp\\build\\app\\intermediates\\incremental\\mergeReleaseResources\\merged.dir\\values-night-v8\\values-night-v8.xml",
+            "map": [
+                {
+                    "source": "D:\\Flutter Project\\tmc\\tmc-flutter\\tmcapp\\android\\app\\src\\main\\res\\values-night\\styles.xml",
+                    "from": {
+                        "startLines": "3,16",
+                        "startColumns": "4,4",
+                        "startOffsets": "172,930",
+                        "endLines": "9,18",
+                        "endColumns": "12,12",
+                        "endOffsets": "583,1094"
+                    },
+                    "to": {
+                        "startLines": "2,9",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,470",
+                        "endLines": "8,11",
+                        "endColumns": "12,12",
+                        "endOffsets": "465,634"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\Diskominfo\\.gradle\\caches\\transforms-3\\8fef7b72dbe9af9c1e49518e208e3c7e\\transformed\\appcompat-1.4.1\\res\\values-night-v8\\values-night-v8.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,125,209,293,389,491,593,687",
+                        "endColumns": "69,83,83,95,101,101,93,88",
+                        "endOffsets": "120,204,288,384,486,588,682,771"
+                    },
+                    "to": {
+                        "startLines": "12,13,14,15,16,17,18,19",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "639,709,793,877,973,1075,1177,1271",
+                        "endColumns": "69,83,83,95,101,101,93,88",
+                        "endOffsets": "704,788,872,968,1070,1172,1266,1355"
+                    }
+                }
+            ]
+        }
+    ]
+}

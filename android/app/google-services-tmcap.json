@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "647507217711",
+    "project_id": "tmcevent-project",
+    "storage_bucket": "tmcevent-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:647507217711:android:f730e903c467e86ef265da",
+        "android_client_info": {
+          "package_name": "com.app.tmc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "647507217711-ntcmar57q62lta0grcpef95blb74sj7j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.tmc",
+            "certificate_hash": "257a72587fdc4d85a02b90d8eb331877966637d5"
+          }
+        },
+        {
+          "client_id": "647507217711-qpaghj9bmb4eh4165qc5a2om8rjfqqr1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.tmc",
+            "certificate_hash": "5a2bdd8b85818248fe35b6d6cf16034e315a6210"
+          }
+        },
+        {
+          "client_id": "647507217711-3p5muc9m91h0hv89ncd9torbt94n5a02.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGf8dXNiTGLqgz3Mflb3kbGqeVFyKfuwU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "647507217711-3p5muc9m91h0hv89ncd9torbt94n5a02.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "D:\\Flutter Project\\tmc\\tmc-flutter\\tmcapp\\build\\qr_code_scanner\\intermediates\\merged_res\\release\\animator\\fragment_open_exit.xml",
+        "source": "C:\\Users\\Diskominfo\\.gradle\\caches\\transforms-3\\ec55f85eb2e92189ecaa427a0b12f4c6\\transformed\\fragment-1.3.6\\res\\animator\\fragment_open_exit.xml"
+    },
+    {
+        "merged": "D:\\Flutter Project\\tmc\\tmc-flutter\\tmcapp\\build\\qr_code_scanner\\intermediates\\merged_res\\release\\animator\\fragment_fade_enter.xml",
+        "source": "C:\\Users\\Diskominfo\\.gradle\\caches\\transforms-3\\ec55f85eb2e92189ecaa427a0b12f4c6\\transformed\\fragment-1.3.6\\res\\animator\\fragment_fade_enter.xml"
+    },
+    {
+        "merged": "D:\\Flutter Project\\tmc\\tmc-flutter\\tmcapp\\build\\qr_code_scanner\\intermediates\\merged_res\\release\\animator\\fragment_close_exit.xml",
+        "source": "C:\\Users\\Diskominfo\\.gradle\\caches\\transforms-3\\ec55f85eb2e92189ecaa427a0b12f4c6\\transformed\\fragment-1.3.6\\res\\animator\\fragment_close_exit.xml"
+    },
+    {
+        "merged": "D:\\Flutter Project\\tmc\\tmc-flutter\\tmcapp\\build\\qr_code_scanner\\intermediates\\merged_res\\release\\animator\\fragment_close_enter.xml",
+        "source": "C:\\Users\\Diskominfo\\.gradle\\caches\\transforms-3\\ec55f85eb2e92189ecaa427a0b12f4c6\\transformed\\fragment-1.3.6\\res\\animator\\fragment_close_enter.xml"
+    },
+    {
+        "merged": "D:\\Flutter Project\\tmc\\tmc-flutter\\tmcapp\\build\\qr_code_scanner\\intermediates\\merged_res\\release\\animator\\fragment_fade_exit.xml",
+        "source": "C:\\Users\\Diskominfo\\.gradle\\caches\\transforms-3\\ec55f85eb2e92189ecaa427a0b12f4c6\\transformed\\fragment-1.3.6\\res\\animator\\fragment_fade_exit.xml"
+    },
+    {
+        "merged": "D:\\Flutter Project\\tmc\\tmc-flutter\\tmcapp\\build\\qr_code_scanner\\intermediates\\merged_res\\release\\animator\\fragment_open_enter.xml",
+        "source": "C:\\Users\\Diskominfo\\.gradle\\caches\\transforms-3\\ec55f85eb2e92189ecaa427a0b12f4c6\\transformed\\fragment-1.3.6\\res\\animator\\fragment_open_enter.xml"
+    }
+]
