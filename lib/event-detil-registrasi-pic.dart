@@ -297,7 +297,7 @@ class _EventDetilRegistrasiPICScreen
                                     ),
                                     color: CupertinoColors.activeBlue,
                                     child: Text(
-                                        "Participant Registration (${MyRegistrant.value.where((element) => element.isRegistrant == false).length})"),
+                                        "Submit Registration (${MyRegistrant.value.where((element) => element.isRegistrant == false).length})"),
                                   )
                                 : Container(),
                           ],
@@ -532,7 +532,7 @@ class _EventDetilRegistrasiPICScreen
 
   Future<void> showKonfirmSubmitPendaftaran() async {
     String nomor_va = "";
-    SmartDialog.showLoading(msg: "Mohon Tunggu...", backDismiss: false);
+    SmartDialog.showLoading(msg: "Please Wait...", backDismiss: false);
     await AkunController.to.getMyNumberVA().then((value) => nomor_va = value);
     if (nomor_va == "") {
       SmartDialog.dismiss();
@@ -759,6 +759,7 @@ class _EventDetilRegistrasiPICScreen
                       height: 15,
                       color: CupertinoColors.lightBackgroundGray,
                     ),
+                    Text("Please make sure the registration is correct, after proceed to payment the registration data cannot be changed anymore!"),
                     SizedBox(
                       height: 20,
                     ),
@@ -898,7 +899,7 @@ class _EventDetilRegistrasiPICScreen
                                       .submitDeleteMultipleRegistrasi(
                                           emailRegistrasi, itemAcara.value.pk!);
                                   GFToast.showToast(
-                                      'Opps, Registration Failed!',
+                                      'Opps, Registration Failed! ${invoiceResult2.errorMessage}',
                                       context,
                                       trailing: const Icon(
                                         Icons.error_outline,
@@ -949,7 +950,7 @@ class _EventDetilRegistrasiPICScreen
                             } else {
                               SmartDialog.dismiss();
                               GFToast.showToast(
-                                  'Opps, Registration Failed!', context,
+                                  'Opps, Registration Failed! ${invoiceResult1.errorMessage}', context,
                                   trailing: const Icon(
                                     Icons.error_outline,
                                     color: GFColors.WARNING,
@@ -968,6 +969,16 @@ class _EventDetilRegistrasiPICScreen
                         size: 18,
                       ),
                     ),
+                    GFButton(
+                       disabledColor: CupertinoColors.systemGrey3,
+                      disabledTextColor: Colors.white,
+                      fullWidthButton: true,
+                      color: GFColors.DARK,
+                      text: "Cancel",
+                      
+                      onPressed: (){
+                        Navigator.of(Get.context!).pop();
+                    }),
                     SizedBox(
                       height: 30,
                     )

@@ -33,6 +33,7 @@ import 'package:tmcapp/event-detil.dart';
 import 'package:tmcapp/event-edit.dart';
 import 'package:tmcapp/event-me.dart';
 import 'package:tmcapp/invoice-list-detil.dart';
+import 'package:tmcapp/invoice_detil.dart';
 import 'package:tmcapp/kelola-survey-input.dart';
 import 'package:tmcapp/kelola-survey-preview.dart';
 import 'package:tmcapp/kelola-survey-result.dart';
@@ -221,6 +222,10 @@ void main() async {
       GetPage(
           name: '/invoice',
           page: () => InvoiceListScreen(),
+          transition: Transition.fadeIn),
+      GetPage(
+          name: '/invoice-detil',
+          page: () => InvoiceDetilScreenView(),
           transition: Transition.fadeIn),
       GetPage(
           name: '/kelola-survey',

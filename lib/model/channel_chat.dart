@@ -6,6 +6,7 @@ class ChannelChat {
   var image = "";
   var member = <String>[];
   var updateTime = "";
+  var eventId = "";
 
   ChannelChat({
     required this.id,
@@ -15,6 +16,7 @@ class ChannelChat {
     required this.image,
     required this.member,
     required this.updateTime,
+    required this.eventId,
   });
 }
 

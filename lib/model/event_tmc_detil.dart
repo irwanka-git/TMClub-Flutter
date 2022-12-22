@@ -13,6 +13,7 @@ class EventTmcDetil {
   bool? isFree;
   bool? isRegistrationClose;
   bool? isListAttendees;
+  bool? isDone;
   int? price;
   List<dynamic>? adminActivity;
   DateTime? createdAt;
@@ -30,6 +31,7 @@ class EventTmcDetil {
     this.mainImageUrl,
     this.description,
     this.isFree,
+    this.isDone,
     this.isRegistrationClose,
     this.isListAttendees,
     this.price,
@@ -53,6 +55,7 @@ class EventTmcDetil {
         mainImageUrl: data['main_image_url'] as String?,
         description: data['description'] as String?,
         isFree: data['is_free'] as bool?,
+        isDone: data['is_done'] as bool?,
         isRegistrationClose: data['is_registration_close'] as bool?,
         isListAttendees: data['is_list_attendees'] as bool?,
         price: data['price'] as int?,
@@ -74,6 +77,7 @@ class EventTmcDetil {
         'main_image_url': mainImageUrl,
         'description': description,
         'is_free': isFree,
+        'is_done': isDone,
         'owned_by_email': owned_by_email,
         'is_registration_close': isRegistrationClose,
         'is_list_attendees': isListAttendees,

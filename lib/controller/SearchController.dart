@@ -31,9 +31,9 @@ class SearchController extends GetxController {
   void setSearchingRef(String value) async {
     ListItem.clear();
     resourceModel(value);
-    //isActive(false);
+    isActive(false);
     if (value == "blog") {
-      //isActive(true);
+      isActive(true);
       //await blogController.getListBlog();
       for (var item in blogController.ListBlog) {
         String image_url = ApiClient().base_url + item.main_image_url;

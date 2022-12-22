@@ -19,12 +19,13 @@ class _ChatScreenState extends State<ChatScreen> {
   final chatController = Get.put(ChatController());
   late ScrollController _scrollController;
   final Color _foregroundColor = Colors.white;
-
+  TextEditingController _searchTextcontroller = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
     if (authController.user.value.uid != "") {
       chatController.listenMessageInbox(authController.user.value.uid);
+      _searchTextcontroller.text = "";
     }
     super.initState();
   }
@@ -34,7 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final uidUser = authController.user.value.uid;
     final Stream<QuerySnapshot> _usersStream = FirebaseFirestore.instance
         .collection('chats')
-        .where('uid', arrayContainsAny: ['group', uidUser])
+        .where('uid', arrayContainsAny: [uidUser])
         .orderBy('type', descending: false)
         .orderBy('updateTime', descending: true)
         .snapshots();
@@ -51,22 +52,16 @@ class _ChatScreenState extends State<ChatScreen> {
           // ignore: unrelated_type_equality_checks
           // print("XXX: ${authController.user.value.idCompany}");
           // print("ROLE: ${authController.user.value.role}");
-          if (authController.user.value.role == "member" && authController.user.value.idCompany=="null") {
+          if (authController.user.value.role == "member" &&
+              authController.user.value.idCompany == "null") {
             return const Center(child: Text("No Chat yet"));
           }
-          return FutureBuilder(
-            future: chatController.getUserChat(snapshot.data!, uidUser),
-            builder: (BuildContext context, AsyncSnapshot snapshot2) {
-              if (snapshot2.data != null) {
-                if (snapshot2.hasData) {
-                  chatController.generateChannelChat(snapshot.data!, uidUser);
-                  return Scaffold(
-                    body: BuildListChannel(),
-                  );
-                }
-              }
-              return const Center(child: Text("Loading..."));
-            },
+          _searchTextcontroller.text = "";
+          chatController.generateChannelChat(snapshot.data!, uidUser);
+          //adjus group chat event
+          chatController.adjusmentGroupChat();
+          return Scaffold(
+            body: BuildListChannel(),
           );
         }
         return const Center(child: Text("Loading..."));
@@ -92,12 +87,16 @@ class _ChatScreenState extends State<ChatScreen> {
               child: Container(
                 padding: const EdgeInsets.only(left: 15, right: 15),
                 child: TextField(
-                  onChanged: (text) {},
+                  onChanged: (text) {
+                    print(text);
+                    chatController.setChannelListView(text);
+                  },
+                  controller: _searchTextcontroller,
                   decoration: const InputDecoration(
                       prefixIcon: Icon(CupertinoIcons.search),
                       contentPadding: EdgeInsets.only(top: 10),
                       border: OutlineInputBorder(),
-                      hintText: 'Search'),
+                      hintText: 'Search Chat..'),
                 ),
               ),
             ),
@@ -105,7 +104,8 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         Obx(() => Container(
               child: SliverList(
-                delegate: BuilderListChannelDelegate(chatController.channel),
+                delegate:
+                    BuilderListChannelDelegate(chatController.channelListview),
               ),
             )),
       ],

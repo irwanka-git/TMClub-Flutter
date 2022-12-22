@@ -72,7 +72,7 @@ class _FormRegistrasiMandiriState extends State<FormRegistrasiMandiri> {
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(
-                    height: 15,
+                    height: 20,
                   ),
                   GFListTile(
                     padding: EdgeInsets.only(bottom: 10, left: 8, right: 8),

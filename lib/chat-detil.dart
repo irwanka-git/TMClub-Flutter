@@ -42,6 +42,7 @@ class _DetilChatScreenState extends State<DetilChatScreen> {
       subtitle: "",
       type: "",
       updateTime: "",
+      eventId: "",
       image: "",
       member: []);
 
@@ -145,15 +146,18 @@ class _DetilChatScreenState extends State<DetilChatScreen> {
           ),
         ),
         backgroundColor: appBarColor,
-        actions: [
-          chat.type == "group"
-              ? IconButton(
-                  icon: const Icon(CupertinoIcons.person_2_fill,
-                      color: Colors.white),
-                  onPressed: () => {Get.toNamed('/user-chat')},
-                )
-              : Container(),
-        ],
+        // actions: [
+        //   chat.type == "group"
+        //       ? IconButton(
+        //           icon: const Icon(CupertinoIcons.person_2_fill,
+        //               color: Colors.white),
+        //           onPressed: () => {
+        //             Get.toNamed('/user-chat',
+        //                   arguments: {'event_id': chat.id})
+        //           },
+        //         )
+        //       : Container(),
+        // ],
       ),
       backgroundColor: const Color.fromARGB(255, 210, 195, 168),
       body: Column(children: <Widget>[

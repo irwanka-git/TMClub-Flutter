@@ -237,25 +237,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         const EdgeInsets.only(
                                                             top: 10, bottom: 0),
                                                     middleText:
-                                                        "Yakin ingin Hapus ${value.youtube_id != "" ? "Tautan Youtube" : "Artikel"} ini?",
+                                                        "Are you sure you want to delete this ${value.youtube_id != "" ? "Youtube Link" : "Article"}?",
                                                     backgroundColor:
                                                         CupertinoColors
-                                                            .darkBackgroundGray,
+                                                            .lightBackgroundGray,
                                                     titleStyle: const TextStyle(
-                                                        color: Colors.white,
+                                                        color: CupertinoColors.darkBackgroundGray,
                                                         fontSize: 16),
                                                     middleTextStyle:
                                                         const TextStyle(
-                                                            color: Colors.white,
+                                                            color: CupertinoColors.darkBackgroundGray,
                                                             fontSize: 14),
                                                     textCancel: "Cancel",
                                                     textConfirm: "Yes, Delete",
                                                     cancelTextColor:
-                                                        Colors.white,
+                                                        CupertinoColors.darkBackgroundGray,
                                                     confirmTextColor:
                                                         Colors.white,
                                                     buttonColor: CupertinoColors
-                                                        .activeOrange,
+                                                        .systemRed,
                                                     onConfirm: () {
                                                       blogController
                                                           .deleteBlog(item.pk)
@@ -266,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                               if (value == true)
                                                                 {
                                                                   GFToast.showToast(
-                                                                      'Berhasil Dihapus',
+                                                                      'Delete Success',
                                                                       context,
                                                                       toastPosition:
                                                                           GFToastPosition
@@ -288,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                               else
                                                                 {
                                                                   GFToast.showToast(
-                                                                      'Gagal Dihapus',
+                                                                      'Delete Failed',
                                                                       context,
                                                                       trailing:
                                                                           const Icon(

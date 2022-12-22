@@ -107,6 +107,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
                       tempChannel = ChannelChat(
                           updateTime: "",
                           id: "chat_${uid1}_$uid2",
+                          eventId: "",
                           title:
                               "${data['displayName'].toString().toUpperCase()}",
                           subtitle: companyController

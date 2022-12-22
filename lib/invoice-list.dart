@@ -304,16 +304,6 @@ class _InvoiceListScreenState extends State<InvoiceListScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Bank"),
-                        Text("${invoice.bank}", textScaleFactor: 1.1)
-                      ],
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
                         Container(
                           width: Get.width * 0.5,
                           child: Column(
@@ -335,8 +325,11 @@ class _InvoiceListScreenState extends State<InvoiceListScreen> {
                             size: GFSize.SMALL,
                             onPressed: () {
                               print("SALIN VA");
-                              FlutterClipboard.copy(invoice.vaNumber!)
-                                  .then((value) => print('copied'));
+                              FlutterClipboard.copy(invoice.vaNumber!).then(
+                                  (value) => GFToast.showToast(
+                                      "Virtual Account Number has been copied",
+                                      context,
+                                      toastPosition: GFToastPosition.BOTTOM));
                             },
                             text: "Copy",
                           ),
@@ -371,7 +364,9 @@ class _InvoiceListScreenState extends State<InvoiceListScreen> {
                             onPressed: () {
                               print("SALIN NOMNIMAL");
                               FlutterClipboard.copy(invoice.amount!.toString())
-                                  .then((value) => print('copied'));
+                                  .then((value) => GFToast.showToast(
+                                      "Total payment has been copied", context,
+                                      toastPosition: GFToastPosition.BOTTOM));
                             },
                             text: "Copy",
                           ),
@@ -402,6 +397,17 @@ class _InvoiceListScreenState extends State<InvoiceListScreen> {
                         ),
                       ],
                     ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    GFButton(
+                      blockButton: true,
+                      color: GFColors.PRIMARY,
+                      onPressed: () {
+                        showDetailInvoice(invoice);
+                      },
+                      text: "Detail Invoice",
+                    ),
                     Divider(
                       height: 20,
                     ),
@@ -420,12 +426,12 @@ class _InvoiceListScreenState extends State<InvoiceListScreen> {
                     : Container(),
                 GFButton(
                   blockButton: true,
+                  color: GFColors.DARK,
                   onPressed: () {
                     Get.back();
                   },
                   text: "Close",
                 ),
-                
               ],
             ),
           ),
@@ -471,5 +477,9 @@ class _InvoiceListScreenState extends State<InvoiceListScreen> {
           SmartDialog.dismiss();
         },
         radius: 0);
+  }
+
+  void showDetailInvoice(Invoice invoice) {
+      Get.toNamed('/invoice-detil', arguments: {'invoice_number': invoice.invoiceNumber});
   }
 }

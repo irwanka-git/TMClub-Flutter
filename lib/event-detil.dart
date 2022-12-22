@@ -48,6 +48,7 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
   final myAttandanceTime = "".obs;
 
   final isRegistrationClose = false.obs;
+  final isClosingEvent = false.obs;
   final isListAttendees = false.obs;
 
   final RefreshController _refreshController =
@@ -85,6 +86,8 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
                 isRegistrationClose.value =
                     itemAcara.value.isRegistrationClose!;
                 isListAttendees.value = itemAcara.value.isListAttendees!;
+                isClosingEvent.value = itemAcara.value.isDone!;
+                print(itemAcara.value.isDone);
               }),
             }
           else
@@ -479,7 +482,7 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
                     //   onPressed: () {
                     //     print("SHROCUT CHAT ADMIN");
                     //   },
-                    //   text: "Chat Group",
+                    //   text: "Chat Group",\
                     //   icon: Icon(
                     //     CupertinoIcons.bubble_left,
                     //     color: GFColors.FOCUS,
@@ -540,14 +543,221 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
               : Container(),
 
           itemAcara.value.isFree == true
-              ? Container(
-                  padding: EdgeInsets.all(10),
-                  child: Text(
-                    "Participant Registration Can Only Be Do by Company Members",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: CupertinoColors.separator),
-                  ))
+              ? isMyEvent.value == false &&
+                      itemAcara.value.isRegistrationClose == false
+                  ? GFButton(
+                      fullWidthButton: true,
+                      color: CupertinoColors.activeOrange,
+                      onPressed: () async {
+                        if (AuthController.to.user.value.role == "member" &&
+                            AuthController.to.user.value.idCompany == "null") {
+                          NotifikasiController.to.notifikasiAktivasiMember();
+                          return;
+                        }
+                        eventController.setKonfirmRegistrasiMandiri("");
+                        await Get.dialog(
+                            FormRegistrasiMandiri(
+                              pk_event: itemAcara.value.pk!,
+                              key: UniqueKey(),
+                              width: Get.width,
+                            ),
+                            barrierDismissible: false);
+                        if (eventController.konfirmRegistrasiMandiri ==
+                            "berhasil") {
+                          reloadDataEvent();
+                        }
+                      },
+                      text: "Click To Register",
+                      icon: Icon(
+                        CupertinoIcons.plus_app,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                    )
+                  : isMyEvent.value == false
+                      ? GFButton(
+                          fullWidthButton: true,
+                          disabledTextColor: Colors.white,
+                          color: CupertinoColors.activeOrange,
+                          onPressed: null,
+                          text: "Registration Closed",
+                          icon: Icon(
+                            CupertinoIcons.nosign,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                        )
+                      : Container()
               : Container(),
+
+          //jika PIC terdaftar sebagai peserta event gratis
+          isMyEvent.value == true 
+              ? Column(
+                  children: [
+                    GFButton(
+                      fullWidthButton: true,
+                      type: GFButtonType.outline,
+                      color: GFColors.FOCUS,
+                      onPressed: myAttandanceTime.value != ""
+                          ? () {
+                              var attendancerecord = {
+                                'attend_time': myAttandanceTime.value,
+                                'date_event': itemAcara.value.date!.toString(),
+                                "event": itemAcara.value.title
+                              };
+                              print(attendancerecord);
+                              //return;
+                              Get.dialog(
+                                  FormAttedanceResult(
+                                      key: UniqueKey(),
+                                      result: attendancerecord,
+                                      width: Get.width),
+                                  barrierDismissible: true);
+                            }
+                          : itemAcara.value.isListAttendees == true &&
+                                  myAttandanceTime.value == ""
+                              ? () async {
+                                  eventController.setQrCodeScanResult("");
+                                  await Get.dialog(QRViewScreen(),
+                                      barrierDismissible: true);
+                                  print("QRCODE VIEW DITUTUP");
+                                  if (eventController.qrCodeScanResult.value !=
+                                      "") {
+                                    Map<String, dynamic>? attendance;
+                                    SmartDialog.showLoading(
+                                        msg: "Attendance...");
+                                    EventTmcDetil cekAcara =
+                                        await eventController
+                                            .getDetilEvent(itemAcara.value.pk!);
+                                    if (cekAcara.isListAttendees! == true) {
+                                      await eventController
+                                          .submitAttendParticipant(
+                                              eventController
+                                                  .qrCodeScanResult.value)
+                                          .then((value) => attendance = value);
+                                      await Future.delayed(
+                                          const Duration(milliseconds: 600));
+                                      SmartDialog.dismiss();
+                                      print(attendance);
+                                      if (attendance != null) {
+                                        await Get.dialog(
+                                            FormAttedanceResult(
+                                                key: UniqueKey(),
+                                                result: attendance,
+                                                width: Get.width),
+                                            barrierDismissible: true);
+                                        reloadDataEvent();
+                                      } else {
+                                        GFToast.showToast(
+                                            'An Invalid QrCode Error Occurred!',
+                                            context,
+                                            trailing: const Icon(
+                                              Icons.dangerous,
+                                              color: GFColors.DANGER,
+                                            ),
+                                            toastDuration: 3,
+                                            toastPosition:
+                                                GFToastPosition.BOTTOM,
+                                            toastBorderRadius: 5.0);
+                                      }
+                                    } else {
+                                      SmartDialog.dismiss();
+                                      reloadDataEvent();
+                                      GFToast.showToast(
+                                          'Sorry, Attendance Has Been Closed!',
+                                          context,
+                                          trailing: const Icon(
+                                            Icons.dangerous,
+                                            color: GFColors.DANGER,
+                                          ),
+                                          toastDuration: 3,
+                                          toastPosition: GFToastPosition.BOTTOM,
+                                          toastBorderRadius: 5.0);
+                                    }
+                                  }
+                                }
+                              : null,
+                      text: myAttandanceTime.value != ""
+                          ? "You've Done Attendance"
+                          : itemAcara.value.isListAttendees == false
+                              ? "Attendance Closed"
+                              : "Take Attendance",
+                      icon: Icon(
+                        itemAcara.value.isListAttendees == false
+                            ? CupertinoIcons.qrcode_viewfinder
+                            : CupertinoIcons.qrcode_viewfinder,
+                        color: GFColors.FOCUS,
+                        size: 18,
+                      ),
+                    ),
+                    GFButton(
+                      fullWidthButton: true,
+                      type: GFButtonType.outline,
+                      color: GFColors.DARK,
+                      onPressed: () {
+                        print("BUKA SCREEN Resouce");
+                        // /event-detil-resources
+                        Get.toNamed('/event-detil-resources',
+                            arguments: {'event': itemAcara.value});
+                      },
+                      text: "Resources",
+                      icon: Icon(
+                        CupertinoIcons.paperclip,
+                        color: GFColors.DARK,
+                        size: 18,
+                      ),
+                    ),
+                    GFButton(
+                      type: GFButtonType.outline,
+                      color: GFColors.FOCUS,
+                      fullWidthButton: true,
+                      onPressed: () {
+                        print("SHROCUT GALLERY");
+                        Get.toNamed('/event-detil-gallery',
+                            arguments: {'event': itemAcara.value});
+                      },
+                      text: "Gallery Photo",
+                      icon: Icon(
+                        CupertinoIcons.photo_on_rectangle,
+                        color: GFColors.FOCUS,
+                        size: 18,
+                      ),
+                    ),
+                    GFButton(
+                      type: GFButtonType.outline,
+                      color: GFColors.FOCUS,
+                      fullWidthButton: true,
+                      onPressed: () {
+                        print("LIST FORM SURVEY");
+                        Get.toNamed('/event-detil-survey',
+                            arguments: {'event': itemAcara.value});
+                      },
+                      text: "Survey",
+                      icon: Icon(
+                        CupertinoIcons.checkmark_rectangle,
+                        color: GFColors.FOCUS,
+                        size: 18,
+                      ),
+                    ),
+                    GFButton(
+                      type: GFButtonType.outline,
+                      color: GFColors.FOCUS,
+                      fullWidthButton: true,
+                      onPressed: () {
+                        print("SHROCUT FORM SURVEY");
+                        downloadSertifikatPeserta();
+                      },
+                      text: "Certificate",
+                      icon: Icon(
+                        CupertinoIcons.checkmark_seal,
+                        color: GFColors.FOCUS,
+                        size: 18,
+                      ),
+                    ),
+                  ],
+                )
+              : Container(),
+
         ],
       ),
     );
@@ -594,7 +804,22 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
                             size: 20, color: Colors.green)
                         : Icon(Icons.lock_outline, size: 20, color: Colors.grey)
                   ],
-                )
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                        "Event Status (${itemAcara.value.isDone == true ? 'Done' : 'Ongoing'})"),
+                    itemAcara.value.isDone == false
+                        ? Icon(Icons.lock_open_outlined,
+                            size: 20, color: Colors.green)
+                        : Icon(Icons.lock_outline,
+                            size: 20, color: Colors.grey),
+                  ],
+                ),
               ],
             ),
           ),
@@ -947,6 +1172,37 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
                         size: 18,
                       ),
                     ),
+                    isClosingEvent.value == false
+                        ? GFButton(
+                            disabledColor: CupertinoColors.systemGrey3,
+                            disabledTextColor: Colors.white,
+                            fullWidthButton: true,
+                            color: CupertinoColors.activeBlue,
+                            onPressed: () {
+                              closingEvent();
+                            },
+                            text: "Finish (Closing Events)",
+                            icon: Icon(
+                              Icons.check_box_rounded,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                          )
+                        : GFButton(
+                            disabledColor: CupertinoColors.systemGrey3,
+                            disabledTextColor: Colors.white,
+                            fullWidthButton: true,
+                            color: CupertinoColors.systemRed,
+                            onPressed: () {
+                              unclosingEvent();
+                            },
+                            text: "Cancel Closing Event",
+                            icon: Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                          ),
                     SizedBox(
                       height: 30,
                     )
@@ -1028,5 +1284,105 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
             toastBorderRadius: 5.0);
       }
     });
+  }
+
+  void closingEvent() {
+    Get.defaultDialog(
+        contentPadding: const EdgeInsets.all(20),
+        title: "Confirmation",
+        titlePadding: const EdgeInsets.only(top: 10, bottom: 0),
+        middleText: "Are you sure you want to closing this event?",
+        backgroundColor: CupertinoColors.lightBackgroundGray,
+        titleStyle: const TextStyle(
+            color: CupertinoColors.darkBackgroundGray, fontSize: 16),
+        middleTextStyle: const TextStyle(
+            color: CupertinoColors.darkBackgroundGray, fontSize: 14),
+        textCancel: "Cancel",
+        textConfirm: "Yes",
+        cancelTextColor: Colors.black,
+        confirmTextColor: Colors.white,
+        buttonColor: CupertinoColors.systemBlue,
+        onConfirm: () {
+          SmartDialog.showLoading(msg: "Closing Event...");
+          eventController.closingEvent(itemAcara.value.pk!).then((value) => {
+                SmartDialog.dismiss(),
+                Navigator.pop(Get.overlayContext!),
+                Navigator.pop(context),
+                if (value == true)
+                  {
+                    GFToast.showToast('Closing Event Success!', context,
+                        trailing: const Icon(
+                          Icons.check_circle,
+                          color: GFColors.SUCCESS,
+                        ),
+                        toastDuration: 3,
+                        toastPosition: GFToastPosition.TOP,
+                        toastBorderRadius: 5.0),
+                    reloadDataEvent()
+                  },
+                if (value == false)
+                  {
+                    GFToast.showToast('Opps Something Wrong!', context,
+                        trailing: const Icon(
+                          Icons.dangerous,
+                          color: GFColors.DANGER,
+                        ),
+                        toastDuration: 3,
+                        toastPosition: GFToastPosition.BOTTOM,
+                        toastBorderRadius: 5.0)
+                  },
+              });
+        },
+        radius: 0);
+  }
+
+  void unclosingEvent() {
+    Get.defaultDialog(
+        contentPadding: const EdgeInsets.all(20),
+        title: "Confirmation",
+        titlePadding: const EdgeInsets.only(top: 10, bottom: 0),
+        middleText: "Are you sure you want to cancel closing this event?",
+        backgroundColor: CupertinoColors.lightBackgroundGray,
+        titleStyle: const TextStyle(
+            color: CupertinoColors.darkBackgroundGray, fontSize: 16),
+        middleTextStyle: const TextStyle(
+            color: CupertinoColors.darkBackgroundGray, fontSize: 14),
+        textCancel: "Cancel",
+        textConfirm: "Yes",
+        cancelTextColor: Colors.black,
+        confirmTextColor: Colors.white,
+        buttonColor: CupertinoColors.systemRed,
+        onConfirm: () {
+          Navigator.pop(Get.overlayContext!);
+          Navigator.pop(context);
+          SmartDialog.showLoading(msg: "Unclosing Event...");
+          eventController.unclosingEvent(itemAcara.value.pk!).then((value) => {
+                SmartDialog.dismiss(),
+                if (value == true)
+                  {
+                    GFToast.showToast('Unclosing Event Success!', context,
+                        trailing: const Icon(
+                          Icons.check_circle,
+                          color: GFColors.SUCCESS,
+                        ),
+                        toastDuration: 3,
+                        toastPosition: GFToastPosition.TOP,
+                        toastBorderRadius: 5.0),
+                    reloadDataEvent()
+                  },
+                if (value == false)
+                  {
+                    GFToast.showToast('Opps Something Wrong!', context,
+                        trailing: const Icon(
+                          Icons.dangerous,
+                          color: GFColors.DANGER,
+                        ),
+                        toastDuration: 3,
+                        toastPosition: GFToastPosition.BOTTOM,
+                        toastBorderRadius: 5.0)
+                  },
+              });
+        },
+        radius: 0);
   }
 }

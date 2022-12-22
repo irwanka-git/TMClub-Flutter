@@ -145,10 +145,11 @@ class ApiClient {
           // }
           ),
     );
-    //print(base_url + path);
+    
     try {
+      //print(data);
       final response = await dio.post(base_url + path, data: data);
-      //print(response.realUri);
+      print(base_url + path);
       print(response);
       if (response.statusCode == HttpStatus.created) {
         return response.data;
@@ -187,7 +188,7 @@ class ApiClient {
           margin: const EdgeInsets.all(0),
         );
       }
-      print(DioErrorType.response);
+      print("error ${DioErrorType.response}" );
       return null;
     }
   }

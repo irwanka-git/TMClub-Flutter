@@ -38,6 +38,7 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
   TextEditingController titleController = TextEditingController();
   TextEditingController deskripsiController = TextEditingController();
   TextEditingController priceController = TextEditingController();
+  TextEditingController deadlineController = TextEditingController();
   TextEditingController dateController =
       TextEditingController(text: DateTime.now().toString());
   TextEditingController venueController = TextEditingController();
@@ -54,6 +55,7 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
     dateController.text = "";
     deskripsiController.text = "";
     venueController.text = "";
+    deadlineController.text = "1";
     imageController.resetUploadResult();
     setState(() {
       is_free.value == true;
@@ -417,10 +419,56 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                                                   border: OutlineInputBorder()),
                                               autocorrect: false,
                                               onChanged: (val) {
-                                                print(val);
-                                                print(priceController.text
-                                                    .replaceAll("Rp. ", "")
-                                                    .replaceAll(".", ""));
+                                                // print(val);
+                                                // print(priceController.text
+                                                //     .replaceAll("Rp. ", "")
+                                                //     .replaceAll(".", ""));
+                                              },
+                                              validator: (_val) {
+                                                if (_val == "" &&
+                                                    is_free.value == false) {
+                                                  return 'Required!';
+                                                }
+                                                return null;
+                                              })
+                                          : Container(),
+                                    ),
+
+                                    //deadline payment (days)
+                                    Container(
+                                      margin: const EdgeInsets.only(top: 15),
+                                      child: is_free.value == false
+                                          ? TextFormField(
+                                              inputFormatters: <
+                                                  TextInputFormatter>[
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly
+                                                ],
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              controller: deadlineController,
+                                              style: const TextStyle(
+                                                  fontSize: 13, height: 2),
+                                              decoration: const InputDecoration(
+                                                  contentPadding:
+                                                      EdgeInsets.symmetric(
+                                                          vertical: 5,
+                                                          horizontal: 15),
+                                                  labelText:
+                                                      "Billing Deadline Notification (days)",
+                                                  hintStyle: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 14),
+                                                  labelStyle: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 13),
+                                                  border: OutlineInputBorder()),
+                                              autocorrect: false,
+                                              onChanged: (val) {
+                                                // print(val);
+                                                // print(priceController.text
+                                                //     .replaceAll("Rp. ", "")
+                                                //     .replaceAll(".", ""));
                                               },
                                               validator: (_val) {
                                                 if (_val == "" &&
@@ -463,6 +511,17 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                                   return;
                                 }
 
+                                if (int.parse(deadlineController.text) == 0) {
+                                  GFToast.showToast(
+                                      'Billing Deadline Minimal 1 Day!', context,
+                                      trailing: const Icon(
+                                        Icons.error_outline,
+                                        color: GFColors.WARNING,
+                                      ),
+                                      toastBorderRadius: 5.0);
+                                  return;
+                                }
+
                                 var eventUpload = {
                                   "title": titleController.text.trim(),
                                   "venue": venueController.text.trim(),
@@ -479,7 +538,8 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                                       ? 0
                                       : priceController.text
                                           .replaceAll("Rp. ", "")
-                                          .replaceAll(".", "")
+                                          .replaceAll(".", ""),
+                                  "billing_deadline": is_free.value ==true ? null : int.parse(deadlineController.text)
                                 };
                                 print(eventUpload);
                                 SmartDialog.showLoading(msg: "Create Event...");

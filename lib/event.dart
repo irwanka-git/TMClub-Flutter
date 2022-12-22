@@ -86,7 +86,8 @@ class _EventScreenState extends State<EventScreen> {
     return CustomScrollView(
       slivers: [
         authController.user.value.role == "admin" ||
-                authController.user.value.role == "member"
+                authController.user.value.role == "member" ||
+                authController.user.value.role == "PIC"
             ? SliverAppBar(
                 backgroundColor: Theme.of(context).canvasColor,
                 stretch: false,
@@ -121,13 +122,18 @@ class _EventScreenState extends State<EventScreen> {
                 backgroundColor: Theme.of(context).canvasColor,
                 toolbarHeight: 0,
               ),
-        Obx(() => Container(
-              child: SliverList(
-                delegate: eventController.isLoading.value == false
-                    ? BuilderListCard(eventController.ListEvent)
-                    : BuilderListSkeletonCard(),
-              ),
-            )),
+        Obx(() => eventController.isLoading.value == false
+            ? Container(
+                child: eventController.ListEvent.length > 0
+                    ? SliverList(
+                        delegate: BuilderListCard(eventController.ListEvent))
+                    : SliverList(delegate: BuilderEmptyCard()),
+              )
+            : Container(
+                child: SliverList(
+                  delegate: BuilderListSkeletonCard(),
+                ),
+              )),
       ],
     );
   }
@@ -154,6 +160,21 @@ class _EventScreenState extends State<EventScreen> {
             child: CreateItemCard(_listBlog[index], context));
       },
       childCount: _listBlog.length,
+    );
+  }
+
+  SliverChildBuilderDelegate BuilderEmptyCard() {
+    return SliverChildBuilderDelegate(
+      (BuildContext context, int index) {
+        return GFCard(
+          elevation: 5,
+          boxFit: BoxFit.cover,
+          content: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+              child: Center(child: Text("No Events Available"))),
+        );
+      },
+      childCount: 1,
     );
   }
 

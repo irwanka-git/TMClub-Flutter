@@ -297,7 +297,7 @@ class _KelolaPICDetilScreenState extends State<KelolaPICDetilScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Obx(() => Text(
-                          "Invite Akun PIC \n${nameCompanyRef.value}",
+                          "Invite Account PIC \n${nameCompanyRef.value}",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 15, fontWeight: FontWeight.w600),
@@ -398,15 +398,7 @@ class _KelolaPICDetilScreenState extends State<KelolaPICDetilScreen> {
                     SizedBox(
                       height: 20,
                     ),
-                    GFButton(
-                      fullWidthButton: true,
-                      color: GFColors.LIGHT,
-                      textColor: GFColors.DARK,
-                      onPressed: () {
-                        Navigator.pop(Get.overlayContext!);
-                      },
-                      text: "Cancel",
-                    ),
+                    
                     GFButton(
                       disabledColor: CupertinoColors.systemGrey3,
                       disabledTextColor: Colors.white,
@@ -506,8 +498,17 @@ class _KelolaPICDetilScreenState extends State<KelolaPICDetilScreen> {
                         size: 18,
                       ),
                     ),
+                    GFButton(
+                      fullWidthButton: true,
+                      color: GFColors.DARK,
+                      textColor: GFColors.WHITE,
+                      onPressed: () {
+                        Navigator.pop(Get.overlayContext!);
+                      },
+                      text: "Cancel",
+                    ),
                     SizedBox(
-                      height: 30,
+                      height: 20,
                     )
                   ],
                 ),

@@ -177,14 +177,16 @@ class AkunController extends GetxController {
     String url = "/reference/list-user/?role=member";
     if (authController.user.value.role == "PIC") {
       String company_id = authController.user.value.idCompany;
+      print("Company ID: ${company_id}");
       url = "/reference/list-user/?role=member&company_id=${company_id}";
+      print(url);
     }
     ListAkun.clear();
     //print("/reference/list-user/?role=member");
     var collection = await ApiClient().requestGet(url, header);
     var emailRegistrant = <String>[];
     for (var item in collection) {
-      if (item['role'] == "member" && item['company_id'] != null) {
+      if ((item['role'] == "member" || item['role'] == "PIC") && item['company_id'] != null) {
         emailRegistrant.add(item['email']);
         AkunFirebase temp = AkunFirebase(
           displayName: item['name'],

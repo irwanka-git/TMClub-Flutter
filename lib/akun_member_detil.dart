@@ -376,8 +376,17 @@ class _KelolaMemberDetilScreenState extends State<KelolaMemberDetilScreen> {
                         size: 18,
                       ),
                     ),
+                    GFButton(
+                      fullWidthButton: true,
+                      color: GFColors.LIGHT,
+                      textColor: GFColors.DARK,
+                      onPressed: () {
+                        Navigator.pop(Get.overlayContext!);
+                      },
+                      text: "Cancel",
+                    ),
                     SizedBox(
-                      height: 30,
+                      height: 20,
                     )
                   ],
                 ),

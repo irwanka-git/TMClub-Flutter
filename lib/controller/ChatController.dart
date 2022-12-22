@@ -1,59 +1,86 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:tmcapp/controller/AuthController.dart';
 import 'package:tmcapp/controller/BottomTabController.dart';
 import 'package:tmcapp/controller/CompanyController.dart';
+import 'package:tmcapp/controller/EventController.dart';
 import 'package:tmcapp/model/channel_chat.dart';
+import 'package:tmcapp/model/event_tmc.dart';
 import 'package:tmcapp/model/user.dart';
+import 'package:tmcapp/client.dart';
 
 class ChatController extends GetxController {
   static ChatController get to => Get.find<ChatController>();
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   List<ChannelChat> channel = <ChannelChat>[].obs;
+  List<ChannelChat> channelListview = <ChannelChat>[].obs;
   List<ChatUser> user = <ChatUser>[].obs;
   Map<String, int> inbox = {"": 0}.obs;
   final companyController = CompanyController.to;
   final btControler = BottomTabController.to;
+  final evtController = EventController.to;
+  final authController = AuthController.to;
 
   final String default_avatar =
       "https://firebasestorage.googleapis.com/v0/b/tmcevent-project.appspot.com/o/default-avatar.png?alt=media&token=bfab603d-855d-41e8-8e81-de9890d6b5a9";
-
+  final String default_group_chat = "https://firebasestorage.googleapis.com/v0/b/tmcevent-project.appspot.com/o/default-group.png?alt=media&token=44ffe146-3a3e-4ca6-95eb-521b07722b9f";
   void generateChannelChat(
       QuerySnapshot<Object?> snapshotData, String uid_user) async {
     //print("GENERATE CHANEL");
     channel.clear();
+    channelListview.clear();
     for (var document in snapshotData.docs) {
       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
       String _uid_other = "";
       List<String> member = List<String>.from(data['uid']);
-      if (data['type'] == 'personal') {
-        for (var _uid in data['uid']) {
-          if (_uid != uid_user) {
-            _uid_other = _uid;
-          }
-        }
-        //print(_uid_other);
-        ChatUser __user = findUserChat(_uid_other);
-        channel.add(ChannelChat(
-            id: document.id,
-            title: __user.title,
-            subtitle: __user.subtitle,
-            type: data['type'],
-            member: member,
-            updateTime: data["updateTime"],
-            image: __user.avatar));
-      } else {
-        channel.add(ChannelChat(
+      // if (data['type'] == 'personal') {
+      //   for (var _uid in data['uid']) {
+      //     if (_uid != uid_user) {
+      //       _uid_other = _uid;
+      //     }
+      //   }
+      //   //print(_uid_other);
+      //   ChatUser __user = findUserChat(_uid_other);
+      //   channel.add(ChannelChat(
+      //       id: document.id,
+      //       title: __user.title,
+      //       subtitle: __user.subtitle,
+      //       type: data['type'],
+      //       member: member,
+      //       eventId: data['eventId']==null ? "": data['eventId'] ,
+      //       updateTime: data["updateTime"],
+      //       image: __user.avatar));
+      // } else {
+        
+      // }
+      channel.add(ChannelChat(
             id: document.id,
             title: data['title'],
             subtitle: data['subtitle'],
             type: data['type'],
+            eventId: data['eventId']==null ? "": data['eventId'] ,
             member: member,
             updateTime: data["updateTime"],
             image: data['image']));
-      }
+    }
+    setChannelListView("");
+  }
+
+  void setChannelListView(String keyword){
+    channelListview.clear();
+    if (keyword == "") {
+      channelListview.addAll(channel);
+    }else{
+       channelListview.addAll(channel.where(
+        (p0) => p0.title
+            .toLowerCase()
+            .contains(keyword.toLowerCase())).toList());
     }
   }
 
@@ -293,24 +320,117 @@ class ChatController extends GetxController {
     });
   }
 
+  void CekGroupChatEventForCurrentUser(String id_event, String title) async{
+    bool exist = false;
+    String chat_id = "chat_event_"+id_event;
+    for (var item in channel) {
+        if (item.id==chat_id){
+           exist = true;
+        }
+    }
+    if (exist ==false){
+        await FirebaseFirestore.instance
+        .collection('chats')
+        .doc(chat_id)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) async {
+          if (documentSnapshot.exists) {
+            print("Sinkroniasi Member Group");
+              final refRoom =
+              FirebaseFirestore.instance.collection('chats').doc(chat_id);
+                await refRoom.update({
+                  "uid": FieldValue.arrayUnion([authController.user.value.uid])
+                });
+          }else{
+            print("Buat Chat Group dulu ya");
+            await FirebaseFirestore.instance
+              .collection('chats')
+              .doc(chat_id)
+              .set(
+                {
+                  "uid": [],
+                  "title":title,
+                  "subtitle":  "Group Chat Event",
+                  "image": default_group_chat,
+                  "eventId": id_event, 
+                  "type": "group",
+                  "creationTime": DateTime.now().toIso8601String(),
+                  "updateTime": DateTime.now().toIso8601String(),
+                },
+                SetOptions(merge: true),
+              )
+              .then((value) => () {
+                    return Future.value(true);
+                  })
+              .catchError((error) => print("Failed to merge data: $error"));
+          }
+        });
+    }
+  }
+
+  
+
+  void adjusmentGroupChat() async {
+    //get list event
+    print("GET LIST MY EVENT");
+    dynamic header = {
+      HttpHeaders.authorizationHeader:
+          'Token ${authController.user.value.token}'
+    };
+    var collection;
+    if (authController.user.value.role == "admin") {
+      collection = await ApiClient().requestGet("/event/myevent/", header);
+      if (collection == null) {
+        return;
+      }
+      for (var item in collection) {
+        var id_event = item['pk'];
+        var title = item['title'];
+        CekGroupChatEventForCurrentUser(id_event.toString(), title);
+      }
+    }
+    if (authController.user.value.role == "member" ||
+        authController.user.value.role == "PIC") {
+      collection =
+          await ApiClient().requestGet("/event/my-registered-event/", header);
+      if (collection == null) {
+        return;
+      }
+      for (var item in collection) {
+        var id_event = item['event_id'];
+        var title = item['title'];
+        //ListMyEvent.add(temp);
+        CekGroupChatEventForCurrentUser(id_event.toString(), title);
+      }
+    }
+
+    if (collection == null) {
+      return;
+    }
+
+    return;
+  }
+
   void listenMessageInbox(String userID) {
+     print("CEK INBOX ${userID}");
     final Stream<QuerySnapshot> _inboxStream = FirebaseFirestore.instance
         .collection('inbox')
         .where('user', arrayContains: userID)
         .snapshots();
 
     _inboxStream.listen((querySnapshot) {
-      print("CEK INBOX");
+      print("CEK INBOX ${userID}");
       inbox.clear();
       int countInbox = 0;
       for (var doc in querySnapshot.docs) {
         //print("documentID: ${doc.id}");
         Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
-        //print("roomID: ${data['roomID']}");
+       
         if (inbox.containsKey(data['roomID'])) {
+           print("roomID: ${data['roomID']}");
           int currentInbox = inbox[data['roomID']]!;
           inbox.update(data['roomID'], (value) => currentInbox + 1);
-        } else {
+        }else{
           inbox.addAll({data['roomID']: 1});
         }
         countInbox++;

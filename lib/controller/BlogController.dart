@@ -40,7 +40,7 @@ class BlogController extends GetxController {
               ApiClient().base_url + blog['main_image_url'].toString());
       ListBlog.add(item);
     }
-
+     ListBlog.sort((a, b) => b.pk.compareTo(a.pk));
     if(BottomTabController.to.bottomTabControl.index==0){
       SearchController.to.setSearchingRef("blog");
     }

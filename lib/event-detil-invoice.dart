@@ -136,7 +136,7 @@ class _EventDetilInvoicePICScreenState
                                     print("SALIN VA");
                                     FlutterClipboard.copy(
                                             invoice.value.vaNumber!)
-                                        .then((value) => print('copied'));
+                                        .then((value) => GFToast.showToast("Virtual Account Number has been copied", context, toastPosition: GFToastPosition.BOTTOM));
                                   },
                                   text: "Copy",
                                 ),
@@ -173,7 +173,7 @@ class _EventDetilInvoicePICScreenState
                                     print("SALIN NOMNIMAL");
                                     FlutterClipboard.copy(
                                             invoice.value.amount!.toString())
-                                        .then((value) => print('copied'));
+                                        .then((value) => GFToast.showToast("Total payment has been copied", context, toastPosition: GFToastPosition.BOTTOM));
                                   },
                                   text: "Copy",
                                 ),
@@ -272,11 +272,11 @@ class _EventDetilInvoicePICScreenState
                                   "${invoice.value.jumlahPeserta} Partisipant:",
                                   style: TextStyle(fontWeight: FontWeight.w400),
                                 ),
-                                Text(
+                                invoice.value.jumlahPeserta! > 0 ? Text(
                                   "${invoice.value.peserta}",
                                   textScaleFactor: 0.95,
                                   style: TextStyle(fontWeight: FontWeight.w400),
-                                )
+                                ):Container()
                               ],
                             ),
                           ),

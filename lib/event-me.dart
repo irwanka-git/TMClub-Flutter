@@ -280,17 +280,17 @@ class _EventMeScreenState extends State<EventMeScreen> {
                                         middleText:
                                             "Are you sure you want to delete this event?",
                                         backgroundColor:
-                                            CupertinoColors.darkBackgroundGray,
+                                            CupertinoColors.lightBackgroundGray,
                                         titleStyle: const TextStyle(
-                                            color: Colors.white, fontSize: 16),
+                                            color: CupertinoColors.darkBackgroundGray, fontSize: 16),
                                         middleTextStyle: const TextStyle(
-                                            color: Colors.white, fontSize: 14),
+                                            color: CupertinoColors.darkBackgroundGray, fontSize: 14),
                                         textCancel: "Cancel",
                                         textConfirm: "Yes",
-                                        cancelTextColor: Colors.white,
+                                        cancelTextColor: Colors.black,
                                         confirmTextColor: Colors.white,
                                         buttonColor:
-                                            CupertinoColors.activeOrange,
+                                            CupertinoColors.systemRed,
                                         onConfirm: () {
                                           eventController
                                               .deleteEvent(item.pk!)

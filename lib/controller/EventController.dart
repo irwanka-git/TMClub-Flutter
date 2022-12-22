@@ -56,7 +56,8 @@ class EventController extends GetxController {
     for (var item in collection) {
       ListEvent.add(EventTmc.fromJson(jsonEncode(item)));
     }
-    if(BottomTabController.to.bottomTabControl.index==1){
+    ListEvent.sort((a, b) => b.date!.compareTo(a.date!));
+    if (BottomTabController.to.bottomTabControl.index == 1) {
       SearchController.to.setSearchingRef("event");
     }
     isLoading(false);
@@ -137,6 +138,8 @@ class EventController extends GetxController {
     isLoading(false);
     if (collection == null) {
       return;
+    }else{
+      ListMyEvent.sort((a, b) => b.date!.compareTo(a.date!));
     }
 
     return;
@@ -237,6 +240,7 @@ class EventController extends GetxController {
 
   Future<bool> cekIsMyEvent(int pk) async {
     //return false;
+    print("CEK EVENT SAYA!");
     bool isMyEvent = false;
     dynamic header = {
       HttpHeaders.authorizationHeader:
@@ -253,24 +257,35 @@ class EventController extends GetxController {
       }
     }
 
-    if (authController.user.value.role == "member" ||
-        authController.user.value.role == "PIC") {
+    if (authController.user.value.role == "member" || authController.user.value.role == "PIC" ) {
       collection =
           await ApiClient().requestGet("/event/my-registered-event/", header);
       for (var item in collection) {
         if (item['event_id'] == pk) {
           isMyEvent = true;
+          print ("is my event: ${isMyEvent}");
           return true;
         }
       }
     }
 
+    // if (authController.user.value.role == "PIC" ) {
+    //   collection =
+    //       await ApiClient().requestGet("/event/${pk}}/register-list-by-pic/", header);
+    //   for (var item in collection) {
+    //     if (item['email'] == authController.user.value.email) {
+    //       isMyEvent = true;
+    //       return true;
+    //     }
+    //   }
+    // }
+    print ("is my event: ${isMyEvent}");
     return isMyEvent;
   }
 
   Future<String> cekMyAttadanceEvent(int pk) async {
     //return false;
-    print("CEK STATUS SBSENSI");
+    print("CEK STATUS ABSENSI $pk");
     String myAttadance = "";
     dynamic header = {
       HttpHeaders.authorizationHeader:
@@ -306,6 +321,7 @@ class EventController extends GetxController {
     EventTmcDetil resultEventTmcDetil = EventTmcDetil();
     var response = await ApiClient().requestGet("/event/${pk}/", null);
     if (response != null) {
+      print(jsonEncode(response));
       resultEventTmcDetil = EventTmcDetil.fromJson(jsonEncode(response));
       return resultEventTmcDetil;
     }
@@ -402,6 +418,12 @@ class EventController extends GetxController {
       invoice = Invoice.fromMap(temp);
       return invoice;
     }
+    if (response['status_code'] == 422) {
+      var invoice_number = response['data']['invoice_number'];
+      var temp = {"invoice_number": "", "event_id": pk, "error_message": response['message']['en'] + ' Invoice Number: ${invoice_number}'};
+      invoice = Invoice.fromMap(temp);
+      return invoice;
+    }
     // if (response['status_code'] == 500) {
     //   //var data = response['data'];
     //   return invoice;
@@ -434,6 +456,15 @@ class EventController extends GetxController {
         'event_id': pk,
         'peserta': registrant.join(", "),
         'jumlah_peserta': registrant.length,
+      };
+      return Invoice.fromMap(invoice_data);
+    }
+
+    if (response['status_code'] == 422) {
+      var invoice_number = response['data']['invoice_number'];
+      var invoice_data = {
+        'invoice_number': invoice_number,
+        'error_message': response['message']['en'],
       };
       return Invoice.fromMap(invoice_data);
     }
@@ -700,11 +731,9 @@ class EventController extends GetxController {
   }
 
   Future<void> openFile(filePath) async {
-     
     final _result = await OpenFile.open(filePath);
-     
   }
-  
+
   Future<bool> downloadExcelRegistrant(EventTmcDetil item) async {
     _requestPermission();
     SmartDialog.showLoading(msg: "Download...");
@@ -833,5 +862,45 @@ class EventController extends GetxController {
       }
     }
     return paymentMethods;
+  }
+
+  Future<bool> closingEvent(int pk) async {
+    //print("DATA ${data}");
+    //return true;
+    dynamic header = {
+      HttpHeaders.authorizationHeader:
+          'Token ${authController.user.value.token}'
+    };
+    var data = {"is_done": true};
+
+    ///event/{id}/set-done/
+    var response = await ApiClient().requestPost('/event/${pk.toString()}/set-done/', data, header);
+    print(response);
+    if (response['status_code'] == 200) {
+      //var data = response['data'];
+      //print("OKE");
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> unclosingEvent(int pk) async {
+    //print("DATA ${data}");
+    //return true;
+    dynamic header = {
+      HttpHeaders.authorizationHeader:
+          'Token ${authController.user.value.token}'
+    };
+    var data = {"is_done": false};
+
+    ///event/{id}/set-done/
+    var response = await ApiClient().requestPost('/event/${pk.toString()}/set-done/', data, header);
+    print(response);
+    if (response['status_code'] == 200) {
+      //var data = response['data'];
+      //print("OKE");
+      return true;
+    }
+    return false;
   }
 }
