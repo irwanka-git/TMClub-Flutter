@@ -47,3 +47,4 @@ app.*.map.json
 build
 .dart_tool
 /build
+.dart_tool/package_config.json
