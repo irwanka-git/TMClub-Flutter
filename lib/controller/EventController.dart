@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tmcapp/client.dart';
 import 'package:tmcapp/controller/AuthController.dart';
@@ -26,6 +27,7 @@ import 'package:tmcapp/model/registrant.dart';
 import 'package:tmcapp/model/resources.dart';
 import 'package:tmcapp/model/survey.dart';
 import 'package:path/path.dart' as path;
+import 'dart:io' show Platform;
 
 class EventController extends GetxController {
   var ListEvent = <EventTmc>[].obs;
@@ -138,7 +140,7 @@ class EventController extends GetxController {
     isLoading(false);
     if (collection == null) {
       return;
-    }else{
+    } else {
       ListMyEvent.sort((a, b) => b.date!.compareTo(a.date!));
     }
 
@@ -257,13 +259,14 @@ class EventController extends GetxController {
       }
     }
 
-    if (authController.user.value.role == "member" || authController.user.value.role == "PIC" ) {
+    if (authController.user.value.role == "member" ||
+        authController.user.value.role == "PIC") {
       collection =
           await ApiClient().requestGet("/event/my-registered-event/", header);
       for (var item in collection) {
         if (item['event_id'] == pk) {
           isMyEvent = true;
-          print ("is my event: ${isMyEvent}");
+          print("is my event: ${isMyEvent}");
           return true;
         }
       }
@@ -279,7 +282,7 @@ class EventController extends GetxController {
     //     }
     //   }
     // }
-    print ("is my event: ${isMyEvent}");
+    print("is my event: ${isMyEvent}");
     return isMyEvent;
   }
 
@@ -420,7 +423,12 @@ class EventController extends GetxController {
     }
     if (response['status_code'] == 422) {
       var invoice_number = response['data']['invoice_number'];
-      var temp = {"invoice_number": "", "event_id": pk, "error_message": response['message']['en'] + ' Invoice Number: ${invoice_number}'};
+      var temp = {
+        "invoice_number": "",
+        "event_id": pk,
+        "error_message":
+            response['message']['en'] + ' Invoice Number: ${invoice_number}'
+      };
       invoice = Invoice.fromMap(temp);
       return invoice;
     }
@@ -746,8 +754,14 @@ class EventController extends GetxController {
     //print(response['header']['content-disposition']);
     //print(response['content']);
 
-    String path_download = await ExternalPath.getExternalStoragePublicDirectory(
-        ExternalPath.DIRECTORY_DOWNLOADS);
+    String path_download = '';
+    if (Platform.isIOS) {
+      Directory appDocDir = await getApplicationDocumentsDirectory();
+      path_download = appDocDir.path;
+    } else {
+      path_download = await ExternalPath.getExternalStoragePublicDirectory(
+          ExternalPath.DIRECTORY_DOWNLOADS);
+    }
 
     Random random = Random();
     int _randomNumber12 = 1000 + random.nextInt(8000);
@@ -780,8 +794,14 @@ class EventController extends GetxController {
     //print(response['header']['content-disposition']);
     //print(response['content']);
 
-    String path_download = await ExternalPath.getExternalStoragePublicDirectory(
-        ExternalPath.DIRECTORY_DOWNLOADS);
+    String path_download = '';
+    if (Platform.isIOS) {
+      Directory appDocDir = await getApplicationDocumentsDirectory();
+      path_download = appDocDir.path;
+    } else {
+      path_download = await ExternalPath.getExternalStoragePublicDirectory(
+          ExternalPath.DIRECTORY_DOWNLOADS);
+    }
 
     Random random = Random();
     int _randomNumber12 = 1000 + random.nextInt(8000);
@@ -874,7 +894,8 @@ class EventController extends GetxController {
     var data = {"is_done": true};
 
     ///event/{id}/set-done/
-    var response = await ApiClient().requestPost('/event/${pk.toString()}/set-done/', data, header);
+    var response = await ApiClient()
+        .requestPost('/event/${pk.toString()}/set-done/', data, header);
     print(response);
     if (response['status_code'] == 200) {
       //var data = response['data'];
@@ -894,7 +915,8 @@ class EventController extends GetxController {
     var data = {"is_done": false};
 
     ///event/{id}/set-done/
-    var response = await ApiClient().requestPost('/event/${pk.toString()}/set-done/', data, header);
+    var response = await ApiClient()
+        .requestPost('/event/${pk.toString()}/set-done/', data, header);
     print(response);
     if (response['status_code'] == 200) {
       //var data = response['data'];

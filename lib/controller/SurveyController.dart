@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tmcapp/client.dart';
 import 'package:tmcapp/controller/AuthController.dart';
@@ -993,7 +994,8 @@ class SurveyController extends GetxController {
     final _result = await OpenFile.open(filePath);
   }
 
-  Future<bool> downloadExcelHasilSurvey(int id, String title, int id_event_ref) async {
+  Future<bool> downloadExcelHasilSurvey(
+      int id, String title, int id_event_ref) async {
     _requestPermission();
     SmartDialog.showLoading(msg: "Download...");
     dynamic header = {
@@ -1001,19 +1003,24 @@ class SurveyController extends GetxController {
           'Token ${authController.user.value.token}'
     };
     var url = "";
-    if (id_event_ref==0){
-      url  = "/survey/${id}/result-export/";
-    }else{
-      url  = "/survey/${id_event_ref}/${id}/result-export/";
+    if (id_event_ref == 0) {
+      url = "/survey/${id}/result-export/";
+    } else {
+      url = "/survey/${id_event_ref}/${id}/result-export/";
     }
     print(url);
-    var response = await ApiClient()
-        .requestPostBlob(url, null, header);
+    var response = await ApiClient().requestPostBlob(url, null, header);
     //print(response['header']['content-disposition']);
     //print(response['content']);
 
-    String path_download = await ExternalPath.getExternalStoragePublicDirectory(
-        ExternalPath.DIRECTORY_DOWNLOADS);
+    String path_download = '';
+    if (Platform.isIOS) {
+      Directory appDocDir = await getApplicationDocumentsDirectory();
+      path_download = appDocDir.path;
+    } else {
+      path_download = await ExternalPath.getExternalStoragePublicDirectory(
+          ExternalPath.DIRECTORY_DOWNLOADS);
+    }
 
     Random random = Random();
     int _randomNumber12 = 1000 + random.nextInt(8000);
@@ -1043,8 +1050,7 @@ class SurveyController extends GetxController {
     //print('/event/${pk.toString()}/survey-send/');
     var url = '/survey/${id}/send/${param}';
     print(url);
-    var response = await ApiClient()
-        .requestPost(url, postdata, header);
+    var response = await ApiClient().requestPost(url, postdata, header);
     if (response == null) {
       return false;
     }
