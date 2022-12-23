@@ -11,6 +11,7 @@ import 'package:getwidget/position/gf_toast_position.dart';
 import 'package:getwidget/types/gf_button_type.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -111,9 +112,17 @@ class _PreviewSertifikatScreen extends State<PreviewSertifikatScreen> {
                             Obx(() => onZooming.value == false
                                 ? GFButton(
                                     onPressed: () async {
-                                      String path_download = await ExternalPath
-                                          .getExternalStoragePublicDirectory(
-                                              ExternalPath.DIRECTORY_DOWNLOADS);
+                                      String path_download = '';
+                                      if (Platform.isIOS) {
+                                        Directory appDocDir =
+                                            await getApplicationDocumentsDirectory();
+                                        path_download = appDocDir.path;
+                                      } else {
+                                        path_download = await ExternalPath
+                                            .getExternalStoragePublicDirectory(
+                                                ExternalPath
+                                                    .DIRECTORY_DOWNLOADS);
+                                      }
 
                                       Random random = Random();
                                       int _randomNumber12 =
