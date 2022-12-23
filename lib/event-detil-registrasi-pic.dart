@@ -652,9 +652,13 @@ class _EventDetilRegistrasiPICScreen
                     height: 20,
                   ),
                   GFTextField(
+                    onTap: () {
+                      AkunController.to.callWhatsappMe(item.phoneNumber);
+                    },
                     expands: true,
                     decoration: InputDecoration(
-                        prefixIcon: item.phoneNumber != ""
+                      prefixIcon: Icon(Icons.phone),
+                        suffixIcon: item.phoneNumber != ""
                             ? IconButton(
                                 onPressed: () {
                                   AkunController.to

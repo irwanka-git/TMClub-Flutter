@@ -113,7 +113,8 @@ class _EventDetilDaftarPesertaScreenState
                   onTap: () async {
                     print(itemAcara.value.pk);
                     print("Export Excel");
-                    await eventController.downloadExcelRegistrant(itemAcara.value);
+                    await eventController
+                        .downloadExcelRegistrant(itemAcara.value);
                   },
                   child: Icon(Icons.download_for_offline),
                 )),
@@ -345,20 +346,21 @@ class _EventDetilDaftarPesertaScreenState
                     height: 20,
                   ),
                   GFTextField(
+                    onTap: () {
+                      AkunController.to.callWhatsappMe(item.phoneNumber);
+                    },
                     expands: true,
                     decoration: InputDecoration(
-                        prefixIcon: item.phoneNumber != ""
-                            ? IconButton(
-                                onPressed: () {
-                                  AkunController.to
-                                      .callWhatsappMe(item.phoneNumber);
-                                },
-                                icon: Icon(
-                                  Icons.whatsapp_outlined,
-                                  color: CupertinoColors.activeGreen,
-                                ),
-                              )
-                            : Icon(Icons.phone),
+                        prefixIcon: Icon(Icons.phone),
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            AkunController.to.callWhatsappMe(item.phoneNumber);
+                          },
+                          icon: Icon(
+                            Icons.whatsapp_outlined,
+                            color: CupertinoColors.activeGreen,
+                          ),
+                        ),
                         contentPadding:
                             EdgeInsets.symmetric(vertical: 0, horizontal: 15),
                         labelText: "Phone Number / Whatsapp",

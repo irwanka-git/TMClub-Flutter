@@ -392,7 +392,8 @@ class _KelolaMemberScreenState extends State<KelolaMemberScreen> {
                                     authController.user.value.idCompany)
                                 .then((value) => statusFirebaseRole = value);
                             GFToast.showToast(
-                                'Menambahkan MemberMember Successfully added', context,
+                                'Menambahkan MemberMember Successfully added',
+                                context,
                                 trailing: const Icon(
                                   Icons.check_circle_outline,
                                   color: GFColors.SUCCESS,
@@ -416,8 +417,7 @@ class _KelolaMemberScreenState extends State<KelolaMemberScreen> {
                           Navigator.of(Get.context!).pop();
                           SmartDialog.dismiss();
                         } else {
-                          GFToast.showToast(
-                              'User Email Required', context,
+                          GFToast.showToast('User Email Required', context,
                               trailing: const Icon(
                                 Icons.error_outline,
                                 color: GFColors.WARNING,
@@ -459,7 +459,8 @@ class _KelolaMemberScreenState extends State<KelolaMemberScreen> {
         contentPadding: const EdgeInsets.all(20),
         title: "Confirmation",
         titlePadding: const EdgeInsets.only(top: 10, bottom: 0),
-        middleText: "Are you sure you want to delete Member \n ${item.displayName}",
+        middleText:
+            "Are you sure you want to delete Member \n ${item.displayName}",
         backgroundColor: CupertinoColors.white,
         titleStyle: const TextStyle(color: Colors.black, fontSize: 16),
         middleTextStyle: const TextStyle(
@@ -480,7 +481,8 @@ class _KelolaMemberScreenState extends State<KelolaMemberScreen> {
                       await akunController.updateRoleCompanyFirebase(
                           item.email!, "member", ""),
                       GFToast.showToast(
-                          'Account Successfully Removed from Member List', context,
+                          'Account Successfully Removed from Member List',
+                          context,
                           trailing: const Icon(
                             Icons.check_circle_outline,
                             color: GFColors.SUCCESS,
@@ -578,9 +580,13 @@ class _KelolaMemberScreenState extends State<KelolaMemberScreen> {
                     height: 20,
                   ),
                   GFTextField(
+                    onTap: () {
+                      AkunController.to.callWhatsappMe(item.phoneNumber);
+                    },
                     expands: true,
                     decoration: InputDecoration(
-                        prefixIcon: item.phoneNumber != ""
+                        prefixIcon: Icon(Icons.phone),
+                        suffixIcon: item.phoneNumber != ""
                             ? IconButton(
                                 onPressed: () {
                                   AkunController.to

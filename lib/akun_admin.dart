@@ -390,8 +390,7 @@ class _KelolaAdminScreenState extends State<KelolaAdminScreen> {
                           Navigator.of(Get.context!).pop();
                           SmartDialog.dismiss();
                         } else {
-                          GFToast.showToast(
-                              'User Email Wajib Diisi!', context,
+                          GFToast.showToast('User Email Wajib Diisi!', context,
                               trailing: const Icon(
                                 Icons.error_outline,
                                 color: GFColors.WARNING,
@@ -483,7 +482,8 @@ class _KelolaAdminScreenState extends State<KelolaAdminScreen> {
         contentPadding: const EdgeInsets.all(20),
         title: "Confirmation",
         titlePadding: const EdgeInsets.only(top: 10, bottom: 0),
-        middleText: "Are you sure you want to delete Member \n ${item.displayName}",
+        middleText:
+            "Are you sure you want to delete Member \n ${item.displayName}",
         backgroundColor: CupertinoColors.white,
         titleStyle: const TextStyle(color: Colors.black, fontSize: 16),
         middleTextStyle: const TextStyle(
@@ -602,8 +602,20 @@ class _KelolaAdminScreenState extends State<KelolaAdminScreen> {
                     height: 20,
                   ),
                   GFTextField(
+                    onTap: () {
+                      AkunController.to.callWhatsappMe(item.phoneNumber);
+                    },
                     expands: true,
-                    decoration: const InputDecoration(
+                    decoration:  InputDecoration(
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            AkunController.to.callWhatsappMe(item.phoneNumber);
+                          },
+                          icon: Icon(
+                            Icons.whatsapp_outlined,
+                            color: CupertinoColors.activeGreen,
+                          ),
+                        ),
                         prefixIcon: Icon(Icons.phone),
                         contentPadding:
                             EdgeInsets.symmetric(vertical: 0, horizontal: 15),

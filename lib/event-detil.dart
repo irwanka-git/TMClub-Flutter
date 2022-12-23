@@ -217,7 +217,7 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
                       ? GFCard(
                           margin: EdgeInsets.all(0),
                           padding: EdgeInsets.all(0),
-                          content: buildActionAdmin(),
+                          content: isMyEvent.value ==true ? buildActionAdmin() :buildLoadingPanelCard(),
                         )
                       : onCheckMyEvent.value == true &&
                               authController.user.value.role == "admin"
