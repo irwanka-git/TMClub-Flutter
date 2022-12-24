@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:tmcapp/controller/EventController.dart';
+import 'dart:io' show Platform;
 
 class QRViewScreen extends StatefulWidget {
   const QRViewScreen({Key? key}) : super(key: key);
@@ -31,6 +32,8 @@ class _QRViewScreenState extends State<QRViewScreen> {
     super.reassemble();
     if (Platform.isAndroid) {
       controller!.pauseCamera();
+    } else if (Platform.isIOS) {
+      controller!.resumeCamera();
     }
     controller!.resumeCamera();
   }
@@ -135,8 +138,11 @@ class _QRViewScreenState extends State<QRViewScreen> {
   }
 
   void _onQRViewCreated(QRViewController controller) async {
-    var flashStatusCek = await controller.getFlashStatus();
+    bool? flashStatusCek = false;
     var kameraInfoCek = describeEnum(await controller.getCameraInfo());
+    if (Platform.isAndroid) {
+      flashStatusCek = await controller.getFlashStatus();
+    }
 
     setState(() {
       this.controller = controller;
