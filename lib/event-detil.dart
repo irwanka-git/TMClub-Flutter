@@ -315,7 +315,7 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
           isMyEvent.value == true
               ? Column(
                   children: [
-                    GFButton(
+                    itemAcara.value.isDone ==false ? GFButton(
                       fullWidthButton: true,
                       type: GFButtonType.outline,
                       color: GFColors.FOCUS,
@@ -410,7 +410,7 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
                         color: GFColors.FOCUS,
                         size: 18,
                       ),
-                    ),
+                    ):Container(),
                     GFButton(
                       fullWidthButton: true,
                       type: GFButtonType.outline,
@@ -460,7 +460,7 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
                         size: 18,
                       ),
                     ),
-                    GFButton(
+                   itemAcara.value.isDone ==true ? GFButton(
                       type: GFButtonType.outline,
                       color: GFColors.FOCUS,
                       fullWidthButton: true,
@@ -474,7 +474,7 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
                         color: GFColors.FOCUS,
                         size: 18,
                       ),
-                    ),
+                    ):Container(),
                     // GFButton(
                     //   type: GFButtonType.outline,
                     //   color: GFColors.FOCUS,
@@ -594,7 +594,7 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
           isMyEvent.value == true 
               ? Column(
                   children: [
-                    GFButton(
+                    itemAcara.value.isDone==false ? GFButton(
                       fullWidthButton: true,
                       type: GFButtonType.outline,
                       color: GFColors.FOCUS,
@@ -689,7 +689,7 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
                         color: GFColors.FOCUS,
                         size: 18,
                       ),
-                    ),
+                    ):Container(),
                     GFButton(
                       fullWidthButton: true,
                       type: GFButtonType.outline,
@@ -739,7 +739,7 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
                         size: 18,
                       ),
                     ),
-                    GFButton(
+                    itemAcara.value.isDone ==true ? GFButton(
                       type: GFButtonType.outline,
                       color: GFColors.FOCUS,
                       fullWidthButton: true,
@@ -753,7 +753,7 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
                         color: GFColors.FOCUS,
                         size: 18,
                       ),
-                    ),
+                    ):Container(),
                   ],
                 )
               : Container(),
@@ -1172,7 +1172,7 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
                         size: 18,
                       ),
                     ),
-                    isClosingEvent.value == false
+                    itemAcara.value.isDone == false
                         ? GFButton(
                             disabledColor: CupertinoColors.systemGrey3,
                             disabledTextColor: Colors.white,

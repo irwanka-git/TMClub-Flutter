@@ -288,7 +288,7 @@ class _EventDetilDaftarPesertaScreenState
   Widget buildDetilAkun(Registrant item) {
     String attendTimeStatus = item.attendance_time != ""
         ? "${DateFormat(DateFormat.YEAR_ABBR_MONTH_WEEKDAY_DAY, "id_ID").format(DateTime.parse(item.attendance_time!))} ${item.attendance_time!.toString().substring(11, 16)}"
-        : "Participants Not Attendance";
+        : "Not Yet Attendance";
     return Container(
         decoration: BoxDecoration(color: Colors.transparent),
         child: Column(
@@ -435,7 +435,7 @@ class _EventDetilDaftarPesertaScreenState
   Widget buildHapusGantiPeserta(Registrant item) {
     String attendTimeStatus = item.attendance_time != ""
         ? "${DateFormat(DateFormat.YEAR_ABBR_MONTH_WEEKDAY_DAY, "id_ID").format(DateTime.parse(item.attendance_time!))} ${item.attendance_time!.toString().substring(11, 16)}"
-        : "Participants Not Attendance";
+        : "Participants Not Yet Attendance";
     return Container(
         decoration: BoxDecoration(color: Colors.transparent),
         child: Column(
