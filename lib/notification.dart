@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, unrelated_type_equality_checks, non_constant_identifier_names
 
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
@@ -14,6 +16,7 @@ import 'package:tmcapp/controller/EventController.dart';
 import 'package:tmcapp/controller/NotifikasiController.dart';
 import 'package:tmcapp/controller/SurveyController.dart';
 import 'package:tmcapp/model/survey.dart';
+import 'package:intl/intl.dart';
 
 class NotificationScreen extends StatefulWidget {
   @override
@@ -48,6 +51,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 )));
   }
 
+  void openScreenInvoice(String invoiceNumber) {
+    Get.toNamed('/invoice-detil', arguments: {'invoice_number': invoiceNumber});
+  }
+
   Widget BuildListBody() {
     return NotifikasiController.to.ListNotification.isNotEmpty
         ? Container(
@@ -70,58 +77,31 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           if (valueNotif.id! > 0) {
                             NotifikasiController.to
                                 .getNotifikasiCountUnreadSurvey();
-                            if (valueNotif.contentTypeModel == "eventmodel") {
-                              // NotifikasiController.to
-                              //     .getNotifikasiCountUnreadSurvey();
-                              SmartDialog.showLoading(msg: "Check Survey...");
-                              var id_event = valueNotif.objectId!;
-                              await NotifikasiController.to
-                                  .getSurveyNeedResponse(id_event)
-                                  .then((valueNeed) async {
-                                //print(valueNeed);
-                                SmartDialog.dismiss();
-                                if (valueNeed != null) {
-                                  int id_survey = valueNeed['id'];
-                                  String title = valueNeed['title'];
-                                  var openSurvey = Survey(
-                                      id: id_survey,
-                                      title: title,
-                                      isDraft: false);
-                                  //print("OPEN SURVEY NEED RESPONSE");
-                                  SurveyController.to
-                                      .generatePreviewFormSurveyEvent(
-                                          openSurvey, id_event);
-                                } else {
-                                  //clear notifikasi ny ya
-                                  ///notification/mark-read-all/
-                                  // await NotifikasiController.to
-                                  //     .markReadAll()
-                                  //     .then((value) {
-                                  //   if (value == true) {
-                                  //     NotifikasiController.to
-                                  //         .getNotifikasiCountUnreadSurvey();
-                                  //   }
-                                  // });
-                                  GFToast.showToast(
-                                      'You Have Completed This Survey!',
-                                      context,
-                                      trailing: const Icon(
-                                        Icons.check_circle_outline,
-                                        color: GFColors.WARNING,
-                                      ),
-                                      toastPosition: GFToastPosition.BOTTOM,
-                                      toastBorderRadius: 5.0);
-                                }
-                              });
-                            }
-
+                            // openScreenInvoice('I8wz');
+                            // return null;
                             if (valueNotif.contentTypeModel ==
                                 "formbuildermodel") {
-                              SmartDialog.showLoading(msg: "Check Survey...");
+                              SmartDialog.showLoading(msg: "Check...");
                               //belum check sudah isi survey belum?
                               //generateOpenFormSurveyDirect
                               SurveyController.to.generateOpenFormSurveyDirect(
                                   valueNotif.objectId!, true);
+                            }
+
+                            if (valueNotif.contentTypeModel == "eventmodel") {
+                              SmartDialog.showLoading(msg: "Check...");
+                              //belum check sudah isi survey belum?
+                              //generateOpenFormSurveyDirect
+                              EventController.to.openScreenItem(
+                                  valueNotif.objectId!.toString());
+                            }
+
+                            if (valueNotif.contentTypeModel == "invoice") {
+                              SmartDialog.showLoading(msg: "Check...");
+                              //belum check sudah isi survey belum?
+                              //generateOpenFormSurveyDirect
+                              openScreenInvoice(
+                                  valueNotif.objectId!.toString());
                             }
                           }
                         });
@@ -131,13 +111,29 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         CupertinoIcons.bell,
                         size: 17,
                       ),
-                      title: Text(
-                        item.title!,
-                        style: TextStyle(
-                            fontWeight: item.isRead == false
-                                ? FontWeight.bold
-                                : FontWeight.normal),
-                        textScaleFactor: 1.1,
+                      title: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          item.createdAt != null
+                              ? Text(
+                                  "${DateFormat(DateFormat.YEAR_MONTH_WEEKDAY_DAY, "id_ID").format(DateTime.parse(item.createdAt!.toIso8601String()))} ${item.createdAt!.toIso8601String().toString().substring(11, 16)}",
+                                  style: TextStyle(
+                                      color: CupertinoColors.inactiveGray,
+                                      fontWeight: item.isRead == false
+                                          ? FontWeight.bold
+                                          : FontWeight.normal),
+                                  textScaleFactor: 0.8)
+                              : Container(),
+                          Text(
+                            item.title!,
+                            style: TextStyle(
+                                fontWeight: item.isRead == false
+                                    ? FontWeight.bold
+                                    : FontWeight.normal),
+                            textScaleFactor: 1.1,
+                          ),
+                        ],
                       ),
                       subTitle: Text(
                         item.summary!,

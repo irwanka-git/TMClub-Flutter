@@ -27,16 +27,21 @@ class NotifikasiController extends GetxController {
   final isLoading = false.obs;
 
   void notifikasiAktivasiMember() {
-    Get.snackbar('Attention', "Your account has not been activated, please contact the company PIC to activate",
-          snackPosition: SnackPosition.BOTTOM,
-          duration: Duration(seconds: 10),
-          icon: Icon(Icons.notifications, color: Colors.white,),
-          borderColor: CupertinoColors.systemGrey,
-          borderWidth: 1.0,
-          margin: EdgeInsets.symmetric(vertical: 50, horizontal: 20),
-          backgroundColor: CupertinoColors.black,
-          colorText: Colors.white);
+    Get.snackbar('Attention',
+        "Your account has not been activated, please contact the company PIC to activate",
+        snackPosition: SnackPosition.BOTTOM,
+        duration: Duration(seconds: 10),
+        icon: Icon(
+          Icons.notifications,
+          color: Colors.white,
+        ),
+        borderColor: CupertinoColors.systemGrey,
+        borderWidth: 1.0,
+        margin: EdgeInsets.symmetric(vertical: 50, horizontal: 20),
+        backgroundColor: CupertinoColors.black,
+        colorText: Colors.white);
   }
+
   void getNotifikasiCountUnreadSurvey() async {
     //print(DateTime.now());
     isLoading.value = true;
@@ -88,13 +93,13 @@ class NotifikasiController extends GetxController {
     //   }
     // }
 
-    var response2 =
-        await ApiClient().requestGet("/notification/?status=unread", header);
+    var response2 = await ApiClient().requestGet("/notification/", header);
     if (response2 != null) {
       for (var item in response2) {
         //print(item);
         ListNotification.add(NotificationItem.fromMap(item));
       }
+      //ListNotification.sort((a, b) => b.id!.compareTo(a.id!));
     }
     isLoading.value = false;
   }
