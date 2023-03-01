@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tmcapp/controller/AuthController.dart';
 import 'package:flutter/material.dart';
+import 'package:tmcapp/controller/CompanyController.dart';
 import 'package:tmcapp/widget/image_widget.dart';
 import 'controller/ChatController.dart';
 import 'model/channel_chat.dart';
@@ -16,6 +17,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final authController = AuthController.to;
+  final companyController = CompanyController.to;
   final chatController = Get.put(ChatController());
   late ScrollController _scrollController;
   final Color _foregroundColor = Colors.white;
@@ -24,6 +26,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     // TODO: implement initState
     if (authController.user.value.uid != "") {
+      companyController.getListCompany();
       chatController.listenMessageInbox(authController.user.value.uid);
       _searchTextcontroller.text = "";
     }
@@ -49,6 +52,7 @@ class _ChatScreenState extends State<ChatScreen> {
           if (authController.user.value.isLogin == false) {
             return const Center(child: Text("You are not logged in yet..."));
           }
+          chatController.clearChannelDisplay();
           // ignore: unrelated_type_equality_checks
           // print("XXX: ${authController.user.value.idCompany}");
           // print("ROLE: ${authController.user.value.role}");
@@ -57,9 +61,13 @@ class _ChatScreenState extends State<ChatScreen> {
             return const Center(child: Text("No Chat yet"));
           }
           _searchTextcontroller.text = "";
-          chatController.generateChannelChat(snapshot.data!, uidUser);
-          //adjus group chat event
-          chatController.adjusmentGroupChat();
+          chatController.getUserChat(snapshot.data!, uidUser).then((value) {
+            chatController.generateChannelChat(snapshot.data!, uidUser,
+                authController.user.value.role.toUpperCase());
+            //adjus group chat event
+            chatController.adjusmentGroupChat();
+          });
+
           return Scaffold(
             body: BuildListChannel(),
           );

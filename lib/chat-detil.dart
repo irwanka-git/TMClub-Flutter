@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -9,6 +10,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:tmcapp/controller/AppController.dart';
 
 import 'package:tmcapp/controller/ChatController.dart';
+import 'package:tmcapp/controller/EventController.dart';
 import 'package:tmcapp/controller/ImageController.dart';
 import 'package:tmcapp/model/channel_chat.dart';
 import 'package:tmcapp/model/message.dart';
@@ -32,6 +34,7 @@ class DetilChatScreen extends StatefulWidget {
 class _DetilChatScreenState extends State<DetilChatScreen> {
   final authController = AuthController.to;
   final chatController = ChatController.to;
+  final eventController = EventController.to;
   final imageController = ImageController.to;
   ScrollController listScrollController = ScrollController();
 
@@ -146,18 +149,86 @@ class _DetilChatScreenState extends State<DetilChatScreen> {
           ),
         ),
         backgroundColor: appBarColor,
-        // actions: [
-        //   chat.type == "group"
-        //       ? IconButton(
-        //           icon: const Icon(CupertinoIcons.person_2_fill,
-        //               color: Colors.white),
-        //           onPressed: () => {
-        //             Get.toNamed('/user-chat',
-        //                   arguments: {'event_id': chat.id})
-        //           },
-        //         )
-        //       : Container(),
-        // ],
+        actions: [
+          chat.type == "group"
+              ? IconButton(
+                  icon: const Icon(CupertinoIcons.person_2_fill,
+                      color: Colors.white),
+                  onPressed: () {
+                    //print(chat.id)
+                    SmartDialog.showLoading(msg: "Please Wait..");
+                    var emailList = <String>[];
+                    print("EVENT ID: " + chat.eventId);
+                    //ambil list email admin event
+                    if (authController.user.value.role != "admin" &&
+                        chat.eventId != "") {
+                      int id_event =
+                          int.parse(chat.id.replaceAll('chat_event_', ''));
+                      eventController.getDetilEvent(id_event).then((value) {
+                        emailList.add(value.owned_by_email!);
+                        SmartDialog.dismiss();
+                        Get.toNamed('/user-chat', arguments: {
+                          'event_id': id_event,
+                          'email_list': emailList,
+                          "title": "Chat Admin"
+                        });
+                      }).onError((error, stackTrace) {
+                        SmartDialog.dismiss();
+                      });
+                    }
+
+                    //ambil list email peserta event
+                    if (authController.user.value.role == "admin" &&
+                        chat.eventId != "") {
+                      int id_event =
+                          int.parse(chat.id.replaceAll('chat_event_', ''));
+                      eventController
+                          .getListEmailPeserta(id_event)
+                          .then((value) {
+                        SmartDialog.dismiss();
+                        Get.toNamed('/user-chat', arguments: {
+                          'event_id': id_event,
+                          'email_list': value,
+                          "title": "Chat Peserta"
+                        });
+                      }).onError((error, stackTrace) {
+                        SmartDialog.dismiss();
+                      });
+                    }
+
+                    //ambil list email semua admin
+                    if (authController.user.value.role != "admin" &&
+                        chat.eventId == "") {
+                      chatController.getListEmailAdmin().then((value) {
+                        SmartDialog.dismiss();
+                        Get.toNamed('/user-chat', arguments: {
+                          'event_id': 0,
+                          'email_list': value,
+                          "title": "Chat Admin"
+                        });
+                      }).onError((error, stackTrace) {
+                        SmartDialog.dismiss();
+                      });
+                    }
+
+                    //ambil list email semua pic
+                    if (authController.user.value.role == "admin" &&
+                        chat.eventId == "") {
+                      chatController.getListEmailPIC().then((value) {
+                        SmartDialog.dismiss();
+                        Get.toNamed('/user-chat', arguments: {
+                          'event_id': 0,
+                          'email_list': value,
+                          "title": "Chat PIC"
+                        });
+                      }).onError((error, stackTrace) {
+                        SmartDialog.dismiss();
+                      });
+                    }
+                  },
+                )
+              : Container(),
+        ],
       ),
       backgroundColor: const Color.fromARGB(255, 210, 195, 168),
       body: Column(children: <Widget>[

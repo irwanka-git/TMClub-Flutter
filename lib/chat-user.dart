@@ -5,6 +5,7 @@ import 'package:tmcapp/controller/AppController.dart';
 import 'package:tmcapp/controller/AuthController.dart';
 import 'package:flutter/material.dart';
 import 'package:tmcapp/controller/CompanyController.dart';
+import 'package:tmcapp/controller/EventController.dart';
 import 'package:tmcapp/widget/image_widget.dart';
 
 import 'controller/ChatController.dart';
@@ -19,29 +20,55 @@ class _UserChatScreenState extends State<UserChatScreen> {
   final authController = AuthController.to;
   final chatController = ChatController.to;
   final companyController = CompanyController.to;
+  final eventController = EventController.to;
   final String role = "";
-
+  final event_id = 0.obs;
+  final cek_list = false.obs;
+  var emailList = <String>[];
+  var title = "";
   @override
   void initState() {
     // TODO: implement initState
+    event_id.value = Get.arguments['event_id'];
+    emailList = Get.arguments['email_list'];
+    title = Get.arguments['title'];
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final Stream<QuerySnapshot> _usersStream;
-    if (authController.user.value.role == "admin") {
+    if (emailList.length > 0) {
       _usersStream = FirebaseFirestore.instance
           .collection('users')
-          .where('role', isNotEqualTo: "admin")
+          .where('email', whereIn: emailList)
           .snapshots();
     } else {
       _usersStream = FirebaseFirestore.instance
           .collection('users')
-          .where('role', isEqualTo: "admin")
-          .orderBy('displayName', descending: false)
+          .where('email', isEqualTo: "xxx")
           .snapshots();
     }
+
+    // if (emailList.length > 0) {
+    //   _usersStream = FirebaseFirestore.instance
+    //       .collection('users')
+    //       .where('email', whereIn: emailList)
+    //       .snapshots();
+    // }
+    // if (authController.user.value.role == "admin") {
+    //   _usersStream = FirebaseFirestore.instance
+    //       .collection('users')
+    //       .where('role', isNotEqualTo: "admin")
+    //       .snapshots();
+    //        .where('email', whereIn: emailRegistrant)
+    // } else {
+    //   _usersStream = FirebaseFirestore.instance
+    //       .collection('users')
+    //       .where('role', isEqualTo: "admin")
+    //       .orderBy('displayName', descending: false)
+    //       .snapshots();
+    // }
     Color appBarColor = AppController.to.appBarColor.value;
     return Scaffold(
       appBar: AppBar(
@@ -52,9 +79,10 @@ class _UserChatScreenState extends State<UserChatScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text(authController.user.value.role == "admin"
-            ? "Chat Peserta"
-            : "Chat Admin"),
+        // title: Text(authController.user.value.role == "admin"
+        //     ? "Chat Peserta"
+        //     : "Chat Admin"),
+        title: Text(title),
         backgroundColor: appBarColor,
         automaticallyImplyLeading: true,
       ),
@@ -110,8 +138,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
                           eventId: "",
                           title:
                               "${data['displayName'].toString().toUpperCase()}",
-                          subtitle: companyController
-                              .getCompanyName(data['idCompany']),
+                          subtitle: data['companyName'] + " (${data['role']})",
                           type: "personal",
                           member: [uid1, uid2],
                           image: data['photoURL']),
@@ -123,7 +150,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
           },
           child: ListTile(
             title: Text("${data['displayName'].toString().toUpperCase()}"),
-            subtitle: Text(companyController.getCompanyName(data['idCompany'])),
+            subtitle: Text(data['companyName'] + " (${data['role']})"),
             leading: CircleImageNetwork(data['photoURL'], 24, UniqueKey()),
           ),
         );

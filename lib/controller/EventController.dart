@@ -240,6 +240,20 @@ class EventController extends GetxController {
     return;
   }
 
+  Future<List> getListEmailPeserta(int pk) async {
+    dynamic header = {
+      HttpHeaders.authorizationHeader:
+          'Token ${authController.user.value.token}'
+    };
+    var collection =
+        await ApiClient().requestGet("/event/${pk}/register-list/", header);
+    var emailRegistrant = <String>[];
+    for (var item in collection) {
+      emailRegistrant.add(item['email']);
+    }
+    return emailRegistrant;
+  }
+
   Future<bool> cekIsMyEvent(int pk) async {
     //return false;
     print("CEK EVENT SAYA!");
