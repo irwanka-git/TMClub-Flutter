@@ -6,6 +6,7 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:external_path/external_path.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
@@ -314,6 +315,7 @@ class EventController extends GetxController {
       collection =
           await ApiClient().requestGet("/event/my-registered-event/", header);
       for (var item in collection) {
+        print(item);
         if (item['event_id'] == pk) {
           if (item["attendance_time"] != null) {
             myAttadance = item["attendance_time"].toString();
@@ -323,6 +325,39 @@ class EventController extends GetxController {
     }
 
     return myAttadance;
+  }
+
+  Future<List> cekListMyAttadanceEvent(int pk) async {
+    //return false;
+    print("CEK STATUS ABSENSI $pk");
+    var attandence_list = <String>[];
+    dynamic header = {
+      HttpHeaders.authorizationHeader:
+          'Token ${authController.user.value.token}'
+    };
+    var collection;
+    if (authController.user.value.role == "member" ||
+        authController.user.value.role == "PIC") {
+      collection =
+          await ApiClient().requestGet("/event/my-registered-event/", header);
+      for (var item in collection) {
+        //print(item);
+        if (item['event_id'] == pk) {
+          if (item["attendance"] != []) {
+            for (var item_atten in item["attendance"]) {
+              print(item_atten);
+              String jam = item_atten['attendance_time'];
+              jam = jam.substring(0, 8);
+              String waktu = (item_atten['attendance_date'] + " " + jam);
+              attandence_list.add(
+                  "${DateFormat(DateFormat.YEAR_MONTH_WEEKDAY_DAY, "id_ID").format(DateTime.parse(waktu))} ${jam}");
+            }
+          }
+        }
+      }
+    }
+
+    return attandence_list;
   }
 
   void getStatusMyAttendanceEvent(int pk) {

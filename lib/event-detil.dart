@@ -46,6 +46,7 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
   final itemAcara = EventTmcDetil().obs;
   final isMyEvent = false.obs;
   final myAttandanceTime = "".obs;
+  var myListAttandanceTime = <String>[];
 
   final isRegistrationClose = false.obs;
   final isClosingEvent = false.obs;
@@ -65,10 +66,19 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
     });
 
     if (cekMyEvent == true) {
+      // await eventController
+      //     .cekMyAttadanceEvent(itemAcara.value.pk!)
+      //     .then((value) => setState(() {
+      //           myAttandanceTime.value = value;
+      //         }));
+
+      myListAttandanceTime.clear();
       await eventController
-          .cekMyAttadanceEvent(itemAcara.value.pk!)
+          .cekListMyAttadanceEvent(itemAcara.value.pk!)
           .then((value) => setState(() {
-                myAttandanceTime.value = value;
+                for (var item in value) {
+                  myListAttandanceTime.add(item);
+                }
               }));
     }
     setState(() {
@@ -217,7 +227,9 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
                       ? GFCard(
                           margin: EdgeInsets.all(0),
                           padding: EdgeInsets.all(0),
-                          content: isMyEvent.value ==true ? buildActionAdmin() :Container(),
+                          content: isMyEvent.value == true
+                              ? buildActionAdmin()
+                              : Container(),
                         )
                       : onCheckMyEvent.value == true &&
                               authController.user.value.role == "admin"
@@ -244,6 +256,149 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
                     borderRadius: BorderRadius.circular(5),
                   )),
             )));
+  }
+
+  Widget GenerateHistoryAttandance() {
+    var historyAtt = <Widget>[];
+    if (myListAttandanceTime.length > 0) {
+      historyAtt.add(GFListTile(
+        margin: EdgeInsets.all(0),
+        title: Text(
+          "History: ",
+          style: TextStyle(fontSize: 16),
+        ),
+      ));
+
+      for (var itemAttandance in myListAttandanceTime) {
+        historyAtt.add(GFListTile(
+          color: CupertinoColors.lightBackgroundGray,
+          margin: EdgeInsets.all(10),
+          icon: Icon(
+            CupertinoIcons.checkmark_alt_circle,
+            color: Colors.green,
+            size: 20,
+          ),
+          title: Text(
+            itemAttandance,
+            style: TextStyle(fontSize: 15),
+          ),
+        ));
+      }
+    } else {
+      historyAtt.add(GFListTile(
+        margin: EdgeInsets.all(0),
+        title: Text(
+          "No Attedance History",
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 16),
+        ),
+      ));
+    }
+
+    historyAtt.add(
+      SizedBox(
+        height: 15,
+      ),
+    );
+    return Column(
+      children: historyAtt,
+    );
+    ;
+  }
+
+  Widget buildModalAbsensi() {
+    final MediaQueryData mediaQueryData = MediaQuery.of(context);
+
+    return AnimatedPadding(
+        duration: kThemeAnimationDuration,
+        padding: mediaQueryData.viewInsets,
+        child: Obx(() => ClipRRect(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+              child: Container(
+                padding: const EdgeInsets.all(30),
+                decoration: const BoxDecoration(color: CupertinoColors.white),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Attendance",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                    Divider(
+                      color: CupertinoColors.lightBackgroundGray,
+                    ),
+                    GenerateHistoryAttandance(),
+                    itemAcara.value.isListAttendees == true
+                        ? GFButton(
+                            disabledColor: CupertinoColors.systemGrey3,
+                            disabledTextColor: Colors.white,
+                            fullWidthButton: true,
+                            color: CupertinoColors.activeGreen,
+                            onPressed: () {
+                              Navigator.pop(Get.overlayContext!);
+                              ambilAbsensiPeserta();
+                            },
+                            text: "Take Attendance",
+                            icon: Icon(
+                              CupertinoIcons.qrcode_viewfinder,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                          )
+                        : Container(),
+                  ],
+                ),
+              ),
+            )));
+  }
+
+  void ambilAbsensiPeserta() async {
+    eventController.setQrCodeScanResult("");
+    await Get.dialog(QRViewScreen(), barrierDismissible: true);
+    print("QRCODE VIEW DITUTUP");
+    if (eventController.qrCodeScanResult.value != "") {
+      Map<String, dynamic>? attendance;
+      SmartDialog.showLoading(msg: "Attendance...");
+      EventTmcDetil cekAcara =
+          await eventController.getDetilEvent(itemAcara.value.pk!);
+      if (cekAcara.isListAttendees! == true) {
+        await eventController
+            .submitAttendParticipant(eventController.qrCodeScanResult.value)
+            .then((value) => attendance = value);
+        await Future.delayed(const Duration(milliseconds: 600));
+        SmartDialog.dismiss();
+        print(attendance);
+        if (attendance != null) {
+          await Get.dialog(
+              FormAttedanceResult(
+                  key: UniqueKey(), result: attendance, width: Get.width),
+              barrierDismissible: true);
+          reloadDataEvent();
+        } else {
+          GFToast.showToast('An Invalid QrCode Error Occurred!', context,
+              trailing: const Icon(
+                Icons.dangerous,
+                color: GFColors.DANGER,
+              ),
+              toastDuration: 3,
+              toastPosition: GFToastPosition.BOTTOM,
+              toastBorderRadius: 5.0);
+        }
+      } else {
+        SmartDialog.dismiss();
+        reloadDataEvent();
+        GFToast.showToast('Sorry, Attendance Has Been Closed!', context,
+            trailing: const Icon(
+              Icons.dangerous,
+              color: GFColors.DANGER,
+            ),
+            toastDuration: 3,
+            toastPosition: GFToastPosition.BOTTOM,
+            toastBorderRadius: 5.0);
+      }
+    }
   }
 
   Container buildActionPeserta() {
@@ -315,94 +470,22 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
           isMyEvent.value == true
               ? Column(
                   children: [
-                    itemAcara.value.isDone ==false ? GFButton(
+                    GFButton(
                       fullWidthButton: true,
                       type: GFButtonType.outline,
                       color: GFColors.FOCUS,
-                      onPressed: myAttandanceTime.value != ""
-                          ? () {
-                              var attendancerecord = {
-                                'attend_time': myAttandanceTime.value,
-                                'date_event': itemAcara.value.date!.toString(),
-                                "event": itemAcara.value.title
-                              };
-                              print(attendancerecord);
-                              //return;
-                              Get.dialog(
-                                  FormAttedanceResult(
-                                      key: UniqueKey(),
-                                      result: attendancerecord,
-                                      width: Get.width),
-                                  barrierDismissible: true);
-                            }
-                          : itemAcara.value.isListAttendees == true &&
-                                  myAttandanceTime.value == ""
-                              ? () async {
-                                  eventController.setQrCodeScanResult("");
-                                  await Get.dialog(QRViewScreen(),
-                                      barrierDismissible: true);
-                                  print("QRCODE VIEW DITUTUP");
-                                  if (eventController.qrCodeScanResult.value !=
-                                      "") {
-                                    Map<String, dynamic>? attendance;
-                                    SmartDialog.showLoading(
-                                        msg: "Attendance...");
-                                    EventTmcDetil cekAcara =
-                                        await eventController
-                                            .getDetilEvent(itemAcara.value.pk!);
-                                    if (cekAcara.isListAttendees! == true) {
-                                      await eventController
-                                          .submitAttendParticipant(
-                                              eventController
-                                                  .qrCodeScanResult.value)
-                                          .then((value) => attendance = value);
-                                      await Future.delayed(
-                                          const Duration(milliseconds: 600));
-                                      SmartDialog.dismiss();
-                                      print(attendance);
-                                      if (attendance != null) {
-                                        await Get.dialog(
-                                            FormAttedanceResult(
-                                                key: UniqueKey(),
-                                                result: attendance,
-                                                width: Get.width),
-                                            barrierDismissible: true);
-                                        reloadDataEvent();
-                                      } else {
-                                        GFToast.showToast(
-                                            'An Invalid QrCode Error Occurred!',
-                                            context,
-                                            trailing: const Icon(
-                                              Icons.dangerous,
-                                              color: GFColors.DANGER,
-                                            ),
-                                            toastDuration: 3,
-                                            toastPosition:
-                                                GFToastPosition.BOTTOM,
-                                            toastBorderRadius: 5.0);
-                                      }
-                                    } else {
-                                      SmartDialog.dismiss();
-                                      reloadDataEvent();
-                                      GFToast.showToast(
-                                          'Sorry, Attendance Has Been Closed!',
-                                          context,
-                                          trailing: const Icon(
-                                            Icons.dangerous,
-                                            color: GFColors.DANGER,
-                                          ),
-                                          toastDuration: 3,
-                                          toastPosition: GFToastPosition.BOTTOM,
-                                          toastBorderRadius: 5.0);
-                                    }
-                                  }
-                                }
-                              : null,
-                      text: myAttandanceTime.value != ""
-                          ? "You've Done Attendance"
-                          : itemAcara.value.isListAttendees == false
-                              ? "Attendance Closed"
-                              : "Take Attendance",
+                      onPressed: () async {
+                        showMaterialModalBottomSheet(
+                          expand: false,
+                          context: this.context,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) => SingleChildScrollView(
+                              child: Container(
+                            child: buildModalAbsensi(),
+                          )),
+                        );
+                      },
+                      text: "Attendance",
                       icon: Icon(
                         itemAcara.value.isListAttendees == false
                             ? CupertinoIcons.qrcode_viewfinder
@@ -410,7 +493,7 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
                         color: GFColors.FOCUS,
                         size: 18,
                       ),
-                    ):Container(),
+                    ),
                     GFButton(
                       fullWidthButton: true,
                       type: GFButtonType.outline,
@@ -460,21 +543,23 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
                         size: 18,
                       ),
                     ),
-                   itemAcara.value.isDone ==true ? GFButton(
-                      type: GFButtonType.outline,
-                      color: GFColors.FOCUS,
-                      fullWidthButton: true,
-                      onPressed: () {
-                        print("SHROCUT FORM SURVEY");
-                        downloadSertifikatPeserta();
-                      },
-                      text: "Certificate",
-                      icon: Icon(
-                        CupertinoIcons.checkmark_seal,
-                        color: GFColors.FOCUS,
-                        size: 18,
-                      ),
-                    ):Container(),
+                    itemAcara.value.isDone == true
+                        ? GFButton(
+                            type: GFButtonType.outline,
+                            color: GFColors.FOCUS,
+                            fullWidthButton: true,
+                            onPressed: () {
+                              print("SHROCUT FORM SURVEY");
+                              downloadSertifikatPeserta();
+                            },
+                            text: "Certificate",
+                            icon: Icon(
+                              CupertinoIcons.checkmark_seal,
+                              color: GFColors.FOCUS,
+                              size: 18,
+                            ),
+                          )
+                        : Container(),
                     // GFButton(
                     //   type: GFButtonType.outline,
                     //   color: GFColors.FOCUS,
@@ -591,97 +676,25 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
               : Container(),
 
           //jika PIC terdaftar sebagai peserta event gratis
-          isMyEvent.value == true 
+          isMyEvent.value == true
               ? Column(
                   children: [
-                    itemAcara.value.isDone==false ? GFButton(
+                    GFButton(
                       fullWidthButton: true,
                       type: GFButtonType.outline,
                       color: GFColors.FOCUS,
-                      onPressed: myAttandanceTime.value != ""
-                          ? () {
-                              var attendancerecord = {
-                                'attend_time': myAttandanceTime.value,
-                                'date_event': itemAcara.value.date!.toString(),
-                                "event": itemAcara.value.title
-                              };
-                              print(attendancerecord);
-                              //return;
-                              Get.dialog(
-                                  FormAttedanceResult(
-                                      key: UniqueKey(),
-                                      result: attendancerecord,
-                                      width: Get.width),
-                                  barrierDismissible: true);
-                            }
-                          : itemAcara.value.isListAttendees == true &&
-                                  myAttandanceTime.value == ""
-                              ? () async {
-                                  eventController.setQrCodeScanResult("");
-                                  await Get.dialog(QRViewScreen(),
-                                      barrierDismissible: true);
-                                  print("QRCODE VIEW DITUTUP");
-                                  if (eventController.qrCodeScanResult.value !=
-                                      "") {
-                                    Map<String, dynamic>? attendance;
-                                    SmartDialog.showLoading(
-                                        msg: "Attendance...");
-                                    EventTmcDetil cekAcara =
-                                        await eventController
-                                            .getDetilEvent(itemAcara.value.pk!);
-                                    if (cekAcara.isListAttendees! == true) {
-                                      await eventController
-                                          .submitAttendParticipant(
-                                              eventController
-                                                  .qrCodeScanResult.value)
-                                          .then((value) => attendance = value);
-                                      await Future.delayed(
-                                          const Duration(milliseconds: 600));
-                                      SmartDialog.dismiss();
-                                      print(attendance);
-                                      if (attendance != null) {
-                                        await Get.dialog(
-                                            FormAttedanceResult(
-                                                key: UniqueKey(),
-                                                result: attendance,
-                                                width: Get.width),
-                                            barrierDismissible: true);
-                                        reloadDataEvent();
-                                      } else {
-                                        GFToast.showToast(
-                                            'An Invalid QrCode Error Occurred!',
-                                            context,
-                                            trailing: const Icon(
-                                              Icons.dangerous,
-                                              color: GFColors.DANGER,
-                                            ),
-                                            toastDuration: 3,
-                                            toastPosition:
-                                                GFToastPosition.BOTTOM,
-                                            toastBorderRadius: 5.0);
-                                      }
-                                    } else {
-                                      SmartDialog.dismiss();
-                                      reloadDataEvent();
-                                      GFToast.showToast(
-                                          'Sorry, Attendance Has Been Closed!',
-                                          context,
-                                          trailing: const Icon(
-                                            Icons.dangerous,
-                                            color: GFColors.DANGER,
-                                          ),
-                                          toastDuration: 3,
-                                          toastPosition: GFToastPosition.BOTTOM,
-                                          toastBorderRadius: 5.0);
-                                    }
-                                  }
-                                }
-                              : null,
-                      text: myAttandanceTime.value != ""
-                          ? "You've Done Attendance"
-                          : itemAcara.value.isListAttendees == false
-                              ? "Attendance Closed"
-                              : "Take Attendance",
+                      onPressed: () async {
+                        showMaterialModalBottomSheet(
+                          expand: false,
+                          context: this.context,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) => SingleChildScrollView(
+                              child: Container(
+                            child: buildModalAbsensi(),
+                          )),
+                        );
+                      },
+                      text: "Attendance",
                       icon: Icon(
                         itemAcara.value.isListAttendees == false
                             ? CupertinoIcons.qrcode_viewfinder
@@ -689,7 +702,7 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
                         color: GFColors.FOCUS,
                         size: 18,
                       ),
-                    ):Container(),
+                    ),
                     GFButton(
                       fullWidthButton: true,
                       type: GFButtonType.outline,
@@ -739,25 +752,26 @@ class _EventDetilScreenState extends State<EventDetilScreen> {
                         size: 18,
                       ),
                     ),
-                    itemAcara.value.isDone ==true ? GFButton(
-                      type: GFButtonType.outline,
-                      color: GFColors.FOCUS,
-                      fullWidthButton: true,
-                      onPressed: () {
-                        print("SHROCUT FORM SURVEY");
-                        downloadSertifikatPeserta();
-                      },
-                      text: "Certificate",
-                      icon: Icon(
-                        CupertinoIcons.checkmark_seal,
-                        color: GFColors.FOCUS,
-                        size: 18,
-                      ),
-                    ):Container(),
+                    itemAcara.value.isDone == true
+                        ? GFButton(
+                            type: GFButtonType.outline,
+                            color: GFColors.FOCUS,
+                            fullWidthButton: true,
+                            onPressed: () {
+                              print("SHROCUT FORM SURVEY");
+                              downloadSertifikatPeserta();
+                            },
+                            text: "Certificate",
+                            icon: Icon(
+                              CupertinoIcons.checkmark_seal,
+                              color: GFColors.FOCUS,
+                              size: 18,
+                            ),
+                          )
+                        : Container(),
                   ],
                 )
               : Container(),
-
         ],
       ),
     );

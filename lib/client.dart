@@ -8,7 +8,8 @@ import 'package:get/get.dart';
 
 class ApiClient {
   var token = "";
-  var base_url = 'http://137.184.58.131:8000';
+  var base_url = 'https://api.toyotamanufacturersclub.id';
+  //var base_url = 'http://137.184.58.131:8000';
   var base_url_api = 'http://137.184.58.131:1338';
 
   //var base_url = 'http://192.168.2.81/api';
@@ -145,7 +146,7 @@ class ApiClient {
           // }
           ),
     );
-    
+
     try {
       //print(data);
       final response = await dio.post(base_url + path, data: data);
@@ -188,7 +189,7 @@ class ApiClient {
           margin: const EdgeInsets.all(0),
         );
       }
-      print("error ${DioErrorType.response}" );
+      print("error ${DioErrorType.response}");
       return null;
     }
   }
@@ -200,7 +201,7 @@ class ApiClient {
           connectTimeout: 3000,
           receiveTimeout: 5000,
           headers: header,
-           responseType: ResponseType.bytes,
+          responseType: ResponseType.bytes,
           validateStatus: (_status) {
             if (_status! <= 500) {
               return true;
@@ -222,8 +223,8 @@ class ApiClient {
       }
       if (response.statusCode == HttpStatus.ok) {
         var resp = {
-         "header": response.headers,
-         "content": response.data,
+          "header": response.headers,
+          "content": response.data,
         };
         return resp;
       }

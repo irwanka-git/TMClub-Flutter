@@ -81,7 +81,7 @@ class _FormAttedanceResultState extends State<FormAttedanceResult> {
                 Container(
                   child: Center(
                     child: Text(
-                      "Absensi Berhasil",
+                      "Attendance Success",
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
@@ -92,7 +92,7 @@ class _FormAttedanceResultState extends State<FormAttedanceResult> {
                   height: 20,
                 ),
                 Text(
-                  "Peserta",
+                  "Partisipant",
                   style: TextStyle(
                       fontSize: 13, color: CupertinoColors.secondaryLabel),
                 ),
@@ -130,7 +130,7 @@ class _FormAttedanceResultState extends State<FormAttedanceResult> {
                   height: 10,
                 ),
                 Text(
-                  "Acara",
+                  "Event",
                   style: TextStyle(
                       fontSize: 13, color: CupertinoColors.secondaryLabel),
                 ),
@@ -163,7 +163,7 @@ class _FormAttedanceResultState extends State<FormAttedanceResult> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Waktu Absensi",
+                            "Attendance Time",
                             style: TextStyle(
                                 fontSize: 13,
                                 color: CupertinoColors.secondaryLabel),
