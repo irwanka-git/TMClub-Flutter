@@ -42,6 +42,7 @@ class _EventDetilDaftarPesertaScreenState
     // monitor network fetch
     isLoading.value = true;
     //await CompanyController.to.getListCompany();
+    await akunController.getListAllAkun();
     await eventController.getListPeserta(itemAcara.value.pk!);
     await Future.delayed(const Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
@@ -243,7 +244,8 @@ class _EventDetilDaftarPesertaScreenState
               radius: 20,
               backgroundImage:
                   Image.network(_listResult[index].photoUrl!).image),
-          icon: _listResult[index].attendance_time == ""
+          icon: _listResult[index].attendance_time == "" ||
+                  _listResult[index].attendance_time == null
               ? Icon(
                   CupertinoIcons.qrcode_viewfinder,
                   color: GFColors.LIGHT,
@@ -286,6 +288,7 @@ class _EventDetilDaftarPesertaScreenState
   }
 
   Widget buildDetilAkun(Registrant item) {
+    //String attendTimeStatus = "";
     String attendTimeStatus = item.attendance_time != ""
         ? "${DateFormat(DateFormat.YEAR_ABBR_MONTH_WEEKDAY_DAY, "id_ID").format(DateTime.parse(item.attendance_time!))} ${item.attendance_time!.toString().substring(11, 16)}"
         : "Not Yet Attendance";

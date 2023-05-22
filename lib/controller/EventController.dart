@@ -15,6 +15,7 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tmcapp/client.dart';
+import 'package:tmcapp/controller/AkunController.dart';
 import 'package:tmcapp/controller/AuthController.dart';
 import 'package:tmcapp/controller/BottomTabController.dart';
 import 'package:tmcapp/controller/CompanyController.dart';
@@ -168,22 +169,27 @@ class EventController extends GetxController {
       //companyList[item['email']] = item['company_name'];
     }
     if (emailRegistrant.length > 0) {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .where('email', whereIn: emailRegistrant)
-          .get()
-          .then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((doc) {
+      int current_index = 0;
+      emailRegistrant.forEach((email) {
+        //String? email = element.email;
+        int index_cari = AkunController.to.ListAllAkun
+            .indexWhere((element) => element.email == email);
+        if (index_cari >= 0) {
           Registrant temp = Registrant(
-            displayName: doc['displayName'],
-            email: doc['email'],
-            companyId: doc['idCompany'],
-            companyName: doc['companyName'],
-            photoUrl: doc['photoURL'],
-            phoneNumber: doc['nomorTelepon'] != null ? doc['nomorTelepon'] : "",
-          );
+              displayName:
+                  AkunController.to.ListAllAkun[index_cari].displayName,
+              email: email,
+              companyId: AkunController.to.ListAllAkun[index_cari].idCompany,
+              companyName:
+                  AkunController.to.ListAllAkun[index_cari].companyName,
+              photoUrl: AkunController.to.ListAllAkun[index_cari].photoUrl,
+              phoneNumber:
+                  AkunController.to.ListAllAkun[index_cari].phoneNumber != null
+                      ? AkunController.to.ListAllAkun[index_cari].phoneNumber
+                      : "",
+              attendance_time: "");
           ListMyRegistrant.add(temp);
-        });
+        }
       });
     }
     isLoading(false);
@@ -212,29 +218,32 @@ class EventController extends GetxController {
       registrar.add(regitem);
     }
     if (emailRegistrant.length > 0) {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .where('email', whereIn: emailRegistrant)
-          .get()
-          .then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((doc) {
-          final attendanceTimeItem =
-              registrar.firstWhere((e) => e['email'] == doc['email']);
-
+      String attendance_time = "";
+      emailRegistrant.forEach((email) {
+        //String? email = element.email;
+        int index_cari = AkunController.to.ListAllAkun
+            .indexWhere((element) => element.email == email);
+        int index_regitem =
+            registrar.indexWhere((element) => element['email'] == email);
+        if (index_regitem >= 0) {
+          attendance_time = registrar[index_regitem]['attendance_time'];
+        }
+        if (index_cari >= 0) {
           Registrant temp = Registrant(
-              displayName: doc['displayName'],
-              email: doc['email'],
-              companyId: doc['idCompany'],
+              displayName:
+                  AkunController.to.ListAllAkun[index_cari].displayName,
+              email: email,
+              companyId: AkunController.to.ListAllAkun[index_cari].idCompany,
               companyName:
-                  CompanyController.to.getCompanyName(doc['idCompany']),
-              photoUrl: doc['photoURL'],
+                  AkunController.to.ListAllAkun[index_cari].companyName,
+              photoUrl: AkunController.to.ListAllAkun[index_cari].photoUrl,
               phoneNumber:
-                  doc['nomorTelepon'] != null ? doc['nomorTelepon'] : "",
-              attendance_time: attendanceTimeItem != null
-                  ? attendanceTimeItem['attendance_time']
-                  : "");
+                  AkunController.to.ListAllAkun[index_cari].phoneNumber != null
+                      ? AkunController.to.ListAllAkun[index_cari].phoneNumber
+                      : "",
+              attendance_time: attendance_time);
           ListMyRegistrant.add(temp);
-        });
+        }
       });
     }
     isLoading(false);

@@ -74,6 +74,7 @@ class _EventDetilRegistrasiPICScreen
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       //companyController.getListCompany();
       reloadMyRegistrant();
+      await akunController.getListAllAkun();
       await akunController.getListAkunMember();
 
       setState(() {
@@ -558,7 +559,8 @@ class _EventDetilRegistrasiPICScreen
     if (listPaymentMethod.isEmpty) {
       SmartDialog.dismiss();
       GFToast.showToast(
-          'Payment method is not yet available, Please Contact Administrator!', context,
+          'Payment method is not yet available, Please Contact Administrator!',
+          context,
           trailing: const Icon(
             Icons.error_outline,
             color: GFColors.WARNING,
@@ -657,7 +659,7 @@ class _EventDetilRegistrasiPICScreen
                     },
                     expands: true,
                     decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.phone),
+                        prefixIcon: Icon(Icons.phone),
                         suffixIcon: item.phoneNumber != ""
                             ? IconButton(
                                 onPressed: () {
@@ -763,7 +765,8 @@ class _EventDetilRegistrasiPICScreen
                       height: 15,
                       color: CupertinoColors.lightBackgroundGray,
                     ),
-                    Text("Please make sure the registration is correct, after proceed to payment the registration data cannot be changed anymore!"),
+                    Text(
+                        "Please make sure the registration is correct, after proceed to payment the registration data cannot be changed anymore!"),
                     SizedBox(
                       height: 20,
                     ),
@@ -954,7 +957,8 @@ class _EventDetilRegistrasiPICScreen
                             } else {
                               SmartDialog.dismiss();
                               GFToast.showToast(
-                                  'Opps, Registration Failed! ${invoiceResult1.errorMessage}', context,
+                                  'Opps, Registration Failed! ${invoiceResult1.errorMessage}',
+                                  context,
                                   trailing: const Icon(
                                     Icons.error_outline,
                                     color: GFColors.WARNING,
@@ -974,15 +978,14 @@ class _EventDetilRegistrasiPICScreen
                       ),
                     ),
                     GFButton(
-                       disabledColor: CupertinoColors.systemGrey3,
-                      disabledTextColor: Colors.white,
-                      fullWidthButton: true,
-                      color: GFColors.DARK,
-                      text: "Cancel",
-                      
-                      onPressed: (){
-                        Navigator.of(Get.context!).pop();
-                    }),
+                        disabledColor: CupertinoColors.systemGrey3,
+                        disabledTextColor: Colors.white,
+                        fullWidthButton: true,
+                        color: GFColors.DARK,
+                        text: "Cancel",
+                        onPressed: () {
+                          Navigator.of(Get.context!).pop();
+                        }),
                     SizedBox(
                       height: 30,
                     )
