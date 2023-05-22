@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:skeletons/skeletons.dart';
+import 'package:tmcapp/controller/AkunController.dart';
 import 'package:tmcapp/controller/AppController.dart';
 import 'package:tmcapp/controller/AuthController.dart';
 import 'package:tmcapp/controller/CompanyController.dart';
@@ -58,6 +59,7 @@ class _KelolaPICScreenState extends State<KelolaPICScreen> {
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       //companyController.getListCompany();
       await companyController.getListCompany();
+
       setState(() {
         ListCompany(companyController.ListCompany);
         isLoading(false);

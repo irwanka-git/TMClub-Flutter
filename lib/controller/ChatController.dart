@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:tmcapp/controller/AkunController.dart';
 import 'package:tmcapp/controller/AuthController.dart';
 import 'package:tmcapp/controller/BottomTabController.dart';
 import 'package:tmcapp/controller/CompanyController.dart';
@@ -107,9 +108,9 @@ class ChatController extends GetxController {
         .where('role', isEqualTo: "admin")
         .get()
         .then((QuerySnapshot querySnapshot) {
-      print(querySnapshot.docs);
+      //print(querySnapshot.docs);
       for (var _data in querySnapshot.docs) {
-        print("USER ___: ${_data['displayName']}");
+        //print("USER ___: ${_data['displayName']}");
         emailList.add(_data['email']);
       }
     });
@@ -146,24 +147,45 @@ class ChatController extends GetxController {
       }
     }
     user.clear();
+    print(uid_list);
     if (uid_list.length > 0) {
+      //var akunController = ;
       print("CEK USER BY UID LIST");
-      print(uid_list);
-      await FirebaseFirestore.instance
-          .collection('users')
-          .where('uid', whereIn: uid_list)
-          .get()
-          .then((QuerySnapshot querySnapshot) {
-        print(querySnapshot.docs);
-        for (var _data in querySnapshot.docs) {
-          print("USER ___: ${_data['displayName']}");
+      uid_list.forEach((uid) {
+        //print(AkunController.to.ListAllAkun);
+
+        int index_cari = AkunController.to.ListAllAkun
+            .indexWhere((element) => element.uid == uid);
+        print(AkunController.to.ListAllAkun[index_cari].companyName);
+        if (index_cari > -1) {
           user.add(ChatUser(
-              _data['uid'],
-              _data['photoURL'],
-              _data['displayName'].toString().toUpperCase(),
-              _data['companyName'] + " (" + _data['role'] + ")"));
+              AkunController.to.ListAllAkun[index_cari].uid!,
+              AkunController.to.ListAllAkun[index_cari].photoUrl!,
+              AkunController.to.ListAllAkun[index_cari].displayName!
+                  .toUpperCase(),
+              AkunController.to.ListAllAkun[index_cari].companyName! +
+                  " (" +
+                  AkunController.to.ListAllAkun[index_cari].role! +
+                  ")"));
         }
       });
+
+      //print(uid_list);
+      // await FirebaseFirestore.instance
+      //     .collection('users')
+      //     .where('uid', whereIn: uid_list)
+      //     .get()
+      //     .then((QuerySnapshot querySnapshot) {
+      //   print(querySnapshot.docs);
+      //   for (var _data in querySnapshot.docs) {
+      //     print("USER ___: ${_data['displayName']}");
+      //     user.add(ChatUser(
+      //         _data['uid'],
+      //         _data['photoURL'],
+      //         _data['displayName'].toString().toUpperCase(),
+      //         _data['companyName'] + " (" + _data['role'] + ")"));
+      //   }
+      // });
     }
     return Future.value(true);
   }

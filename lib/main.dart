@@ -273,7 +273,7 @@ class CreateNavigationDrawer extends StatelessWidget {
     final GlobalKey<ScaffoldState> _scaffoldKey =
         new GlobalKey<ScaffoldState>();
     String AppTitle = "Toyota Manufacturer Club (TMClub)";
-
+    akunController.getListAllAkun();
     return GetX<AppController>(
       init: AppController(),
       initState: (_) {},

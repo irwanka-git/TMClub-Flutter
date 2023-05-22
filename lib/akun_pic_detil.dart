@@ -81,6 +81,7 @@ class _KelolaPICDetilScreenState extends State<KelolaPICDetilScreen> {
     // });
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       //akunController.getListAkun();
+      await akunController.getListAllAkun();
       await akunController.getListAkunPIC();
       setState(() {
         ListAkun(akunController.ListAkun);
@@ -398,7 +399,6 @@ class _KelolaPICDetilScreenState extends State<KelolaPICDetilScreen> {
                     SizedBox(
                       height: 20,
                     ),
-                    
                     GFButton(
                       disabledColor: CupertinoColors.systemGrey3,
                       disabledTextColor: Colors.white,
@@ -700,9 +700,8 @@ class _KelolaPICDetilScreenState extends State<KelolaPICDetilScreen> {
                     height: 20,
                   ),
                   GFTextField(
-                    onTap: (){
-                      AkunController.to
-                                      .callWhatsappMe(item.phoneNumber);
+                    onTap: () {
+                      AkunController.to.callWhatsappMe(item.phoneNumber);
                     },
                     expands: true,
                     decoration: InputDecoration(
@@ -973,9 +972,7 @@ class _KelolaPICDetilScreenState extends State<KelolaPICDetilScreen> {
                           Navigator.of(Get.context!).pop();
                           SmartDialog.dismiss();
                           if (statusUpdate == false) {
-                            GFToast.showToast(
-                                'Failed Update!',
-                                context,
+                            GFToast.showToast('Failed Update!', context,
                                 trailing: const Icon(
                                   Icons.error_outline,
                                   color: GFColors.WARNING,
@@ -997,7 +994,7 @@ class _KelolaPICDetilScreenState extends State<KelolaPICDetilScreen> {
                               toastBorderRadius: 5.0);
                         }
                       },
-                      text:"VA Number Update",
+                      text: "VA Number Update",
                       icon: Icon(
                         Icons.save,
                         color: Colors.white,

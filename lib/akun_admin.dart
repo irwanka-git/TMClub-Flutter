@@ -38,6 +38,7 @@ class _KelolaAdminScreenState extends State<KelolaAdminScreen> {
     setState(() {
       isLoading(false);
     });
+    await akunController.getListAllAkun();
     await akunController.getListAkunAdmin();
 
     //await CompanyController.to.getListCompany();
@@ -606,7 +607,7 @@ class _KelolaAdminScreenState extends State<KelolaAdminScreen> {
                       AkunController.to.callWhatsappMe(item.phoneNumber);
                     },
                     expands: true,
-                    decoration:  InputDecoration(
+                    decoration: InputDecoration(
                         suffixIcon: IconButton(
                           onPressed: () {
                             AkunController.to.callWhatsappMe(item.phoneNumber);

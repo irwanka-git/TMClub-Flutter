@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:tmcapp/controller/AkunController.dart';
 import 'package:tmcapp/controller/AuthController.dart';
 import 'package:flutter/material.dart';
 import 'package:tmcapp/controller/CompanyController.dart';
@@ -17,6 +18,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final authController = AuthController.to;
+  final akunController = AkunController.to;
   final companyController = CompanyController.to;
   final chatController = Get.put(ChatController());
   late ScrollController _scrollController;
@@ -27,6 +29,7 @@ class _ChatScreenState extends State<ChatScreen> {
     // TODO: implement initState
     if (authController.user.value.uid != "") {
       companyController.getListCompany();
+      akunController.getListAllAkun();
       chatController.listenMessageInbox(authController.user.value.uid);
       _searchTextcontroller.text = "";
     }

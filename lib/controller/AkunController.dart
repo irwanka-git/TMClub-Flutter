@@ -12,11 +12,44 @@ import 'package:tmcapp/model/akun_firebase.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class AkunController extends GetxController {
-  final ListAkun = <AkunFirebase>[].obs;
   static AkunController get to => Get.find<AkunController>();
+  final ListAkun = <AkunFirebase>[].obs;
+  final ListAllAkun = <AkunFirebase>[].obs;
+
   final authController = AuthController.to;
   final isLoading = true.obs;
   final updateValueNomorVA = "".obs;
+
+  Future<void> getListAllAkun() async {
+    isLoading(true);
+    print("GET ALL USER FIREBASE");
+    //await CompanyController.to.getListCompany();
+    //var collection = await ApiClient().requestGet("/company/", null);
+    ListAllAkun.clear();
+    await FirebaseFirestore.instance
+        .collection('users')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        ///print(doc['displayName']);
+        AkunFirebase temp = AkunFirebase(
+          displayName: doc['displayName'],
+          email: doc['email'],
+          idCompany: doc['idCompany'],
+          companyName: doc['companyName'],
+          photoUrl: doc['photoURL'],
+          role: doc['role'],
+          phoneNumber: doc['nomorTelepon'] != null ? doc['nomorTelepon'] : "",
+          uid: doc['uid'],
+        );
+        ListAllAkun.add(temp);
+        //print("CEK AKUN:${temp.displayName}");
+      });
+    });
+    isLoading(false);
+    return;
+  }
+
   Future<void> getListAkun(String role) async {
     isLoading(true);
     //await CompanyController.to.getListCompany();
@@ -96,19 +129,20 @@ class AkunController extends GetxController {
       }
     }
     if (emailRegistrant.length > 0) {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .where('email', whereIn: emailRegistrant)
-          .get()
-          .then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((doc) {
-          int index =
-              ListAkun.indexWhere((element) => element.email == doc['email']);
-          ListAkun[index].phoneNumber = doc['nomorTelepon']! ?? "";
-          ListAkun[index].uid = doc['uid']! ?? "";
-          ListAkun[index].photoUrl = doc['photoURL']! ?? "";
+      if (ListAkun.length > 0) {
+        int current_index = 0;
+        ListAkun.forEach((element) {
+          String? email = element.email;
+          int index_cari =
+              ListAllAkun.indexWhere((element) => element.email == email);
+          ListAkun[current_index].phoneNumber =
+              ListAllAkun[index_cari].phoneNumber ?? "";
+          ListAkun[current_index].uid = ListAllAkun[index_cari].uid ?? "";
+          ListAkun[current_index].photoUrl =
+              ListAllAkun[index_cari].photoUrl ?? "";
+          current_index++;
         });
-      });
+      }
     }
     //await CompanyController.to.getListCompany();
     //var collection = await ApiClient().requestGet("/company/", null);
@@ -139,28 +173,29 @@ class AkunController extends GetxController {
               item['company_id'] != null ? item['company_id'].toString() : "",
           companyName: item['company_name'] != null ? item['company_name'] : "",
           photoUrl: "",
-          role: 'admin',
+          role: 'PIC',
           phoneNumber: "",
           uid: "",
         );
         ListAkun.add(temp);
       }
     }
-    if (emailRegistrant.length > 0) {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .where('email', whereIn: emailRegistrant)
-          .get()
-          .then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((doc) {
-          int index =
-              ListAkun.indexWhere((element) => element.email == doc['email']);
-          ListAkun[index].phoneNumber = doc['nomorTelepon']! ?? "";
-          ListAkun[index].uid = doc['uid']! ?? "";
-          ListAkun[index].photoUrl = doc['photoURL']! ?? "";
-        });
+    print(emailRegistrant.length);
+    if (ListAkun.length > 0) {
+      int current_index = 0;
+      ListAkun.forEach((element) {
+        String? email = element.email;
+        int index_cari =
+            ListAllAkun.indexWhere((element) => element.email == email);
+        ListAkun[current_index].phoneNumber =
+            ListAllAkun[index_cari].phoneNumber ?? "";
+        ListAkun[current_index].uid = ListAllAkun[index_cari].uid ?? "";
+        ListAkun[current_index].photoUrl =
+            ListAllAkun[index_cari].photoUrl ?? "";
+        current_index++;
       });
     }
+
     //await CompanyController.to.getListCompany();
     //var collection = await ApiClient().requestGet("/company/", null);
     //reference/list-user/?role=member&company_id=8
@@ -186,7 +221,8 @@ class AkunController extends GetxController {
     var collection = await ApiClient().requestGet(url, header);
     var emailRegistrant = <String>[];
     for (var item in collection) {
-      if ((item['role'] == "member" || item['role'] == "PIC") && item['company_id'] != null) {
+      if ((item['role'] == "member" || item['role'] == "PIC") &&
+          item['company_id'] != null) {
         emailRegistrant.add(item['email']);
         AkunFirebase temp = AkunFirebase(
           displayName: item['name'],
@@ -202,19 +238,18 @@ class AkunController extends GetxController {
         ListAkun.add(temp);
       }
     }
-    if (emailRegistrant.length > 0) {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .where('email', whereIn: emailRegistrant)
-          .get()
-          .then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((doc) {
-          int index =
-              ListAkun.indexWhere((element) => element.email == doc['email']);
-          ListAkun[index].phoneNumber = doc['nomorTelepon']! ?? "";
-          ListAkun[index].uid = doc['uid']! ?? "";
-          ListAkun[index].photoUrl = doc['photoURL']! ?? "";
-        });
+    if (ListAkun.length > 0) {
+      int current_index = 0;
+      ListAkun.forEach((element) {
+        String? email = element.email;
+        int index_cari =
+            ListAllAkun.indexWhere((element) => element.email == email);
+        ListAkun[current_index].phoneNumber =
+            ListAllAkun[index_cari].phoneNumber ?? "";
+        ListAkun[current_index].uid = ListAllAkun[index_cari].uid ?? "";
+        ListAkun[current_index].photoUrl =
+            ListAllAkun[index_cari].photoUrl ?? "";
+        current_index++;
       });
     }
     //await CompanyController.to.getListCompany();

@@ -283,12 +283,12 @@ class ApiClient {
           // }
           ),
     );
-    //print(base_url + path);
+    print(base_url + path);
     try {
       final response = await dio.get(base_url + path);
-      //print(response);
+      print(response);
       if (response.statusCode == HttpStatus.ok) {
-        //print(response.data);
+        print(response.data);
         //print("200");
         // print(response.data);
         return response.data;

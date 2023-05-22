@@ -73,6 +73,7 @@ class _KelolaMemberDetilScreenState extends State<KelolaMemberDetilScreen> {
     });
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       //akunController.getListAkun();
+      await akunController.getListAllAkun();
       await akunController.getListAkunMember();
       setState(() {
         ListAkun(akunController.ListAkun);
@@ -345,7 +346,8 @@ class _KelolaMemberDetilScreenState extends State<KelolaMemberDetilScreen> {
                                     "member", idCompanyRef.value)
                                 .then((value) => statusFirebaseRole = value);
                             GFToast.showToast(
-                                'Menambahkan MemberMember Successfully added', context,
+                                'Menambahkan MemberMember Successfully added',
+                                context,
                                 trailing: const Icon(
                                   Icons.check_circle_outline,
                                   color: GFColors.SUCCESS,
@@ -355,8 +357,7 @@ class _KelolaMemberDetilScreenState extends State<KelolaMemberDetilScreen> {
                                 toastBorderRadius: 5.0);
                             akunController.getListAkunMember();
                           } else {
-                            GFToast.showToast(
-                                'Failed Add Member..', context,
+                            GFToast.showToast('Failed Add Member..', context,
                                 trailing: const Icon(
                                   Icons.check_circle_outline,
                                   color: GFColors.DANGER,

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:tmcapp/controller/AkunController.dart';
 import 'package:tmcapp/controller/AppController.dart';
 import 'package:tmcapp/controller/AuthController.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class UserChatScreen extends StatefulWidget {
 class _UserChatScreenState extends State<UserChatScreen> {
   final authController = AuthController.to;
   final chatController = ChatController.to;
+  final akunController = AkunController.to;
   final companyController = CompanyController.to;
   final eventController = EventController.to;
   final String role = "";
@@ -41,7 +43,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
     if (emailList.length > 0) {
       _usersStream = FirebaseFirestore.instance
           .collection('users')
-          .where('email', whereIn: emailList)
+          //.where('email', whereIn: emailList)
           .snapshots();
     } else {
       _usersStream = FirebaseFirestore.instance
@@ -115,6 +117,17 @@ class _UserChatScreenState extends State<UserChatScreen> {
       children: snapshot.data!.docs.map((DocumentSnapshot document) {
         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
         //print(document.id);
+        int ada = emailList.indexOf(data['email']);
+        if (ada < 0) {
+          return Container();
+        }
+        int index_company = companyController.ListCompany.indexWhere(
+            (element) => element.pk == data['idCompany']);
+        String companyName = "";
+        if (index_company >= 0) {
+          companyName =
+              companyController.ListCompany[index_company].displayName!;
+        }
         return InkWell(
           onTap: () async {
             String currentUid = authController.user.value.uid;
@@ -138,7 +151,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
                           eventId: "",
                           title:
                               "${data['displayName'].toString().toUpperCase()}",
-                          subtitle: data['companyName'] + " (${data['role']})",
+                          subtitle: companyName + " (${data['role']})",
                           type: "personal",
                           member: [uid1, uid2],
                           image: data['photoURL']),
@@ -150,7 +163,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
           },
           child: ListTile(
             title: Text("${data['displayName'].toString().toUpperCase()}"),
-            subtitle: Text(data['companyName'] + " (${data['role']})"),
+            subtitle: Text(companyName + " (${data['role']})"),
             leading: CircleImageNetwork(data['photoURL'], 24, UniqueKey()),
           ),
         );
