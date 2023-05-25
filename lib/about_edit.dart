@@ -34,7 +34,7 @@ class _AboutEditScreenState extends State<AboutEditScreen> {
   final blogController = Get.put(BlogController());
   TextEditingController titleController = TextEditingController();
   TextEditingController annualDirectoryController = TextEditingController();
-  //var contentController;
+  //var contentController;l
   final HtmlEditorController contentController = HtmlEditorController();
 
   final aboutController = AboutController.to;
@@ -202,13 +202,11 @@ class _AboutEditScreenState extends State<AboutEditScreen> {
                       itemCount: listAnnual.length,
                       itemBuilder: (BuildContext context, int index) {
                         return GFListTile(
-                          title: Text(
-                              listAnnual[index].displayName!,
+                          title: Text(listAnnual[index].displayName!,
                               style: TextStyle(
                                 fontSize: 16,
                               )),
-                          subTitleText:
-                              "${listAnnual[index].url}",
+                          subTitleText: "${listAnnual[index].url}",
                           padding:
                               EdgeInsets.symmetric(horizontal: 5, vertical: 8),
                           margin: EdgeInsets.all(0),

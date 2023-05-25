@@ -8,7 +8,6 @@ import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
-import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tmcapp/client.dart';
@@ -21,6 +20,7 @@ import 'package:tmcapp/model/survey.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'dart:developer' as developer;
 import 'package:path/path.dart' as path;
+import 'package:open_file_safe/open_file_safe.dart';
 
 class SurveyController extends GetxController {
   final ListSurvey = <Survey>[].obs;
